@@ -42,7 +42,7 @@
       "path": "lang/it.json"
     }
   ],
-  "url": "https://github.com/RiccardoMont1/pok-role-combat-hud",
-  "manifest": "https://raw.githubusercontent.com/RiccardoMont1/pok-role-combat-hud/main/module.json",
-  "download": "https://github.com/RiccardoMont1/pok-role-combat-hud/archive/refs/heads/main.zip"
+  "url": "https://github.com/LinguardEvergreen/pok-role-combat-hud",
+  "manifest": "https://raw.githubusercontent.com/LinguardEvergreen/pok-role-combat-hud/main/module.json",
+  "download": "https://github.com/LinguardEvergreen/pok-role-combat-hud/archive/refs/tags/v1.0.0.zip"
 }
