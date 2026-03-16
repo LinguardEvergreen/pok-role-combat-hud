@@ -1,0 +1,88 @@
+{
+  "POKEHUD": {
+    "Menu": {
+      "Battle": "Lotta",
+      "Pokemon": "Pokémon",
+      "Bag": "Borsa",
+      "Run": "Fuga"
+    },
+    "Battle": {
+      "NoMoves": "Nessuna mossa disponibile."
+    },
+    "Pokemon": {
+      "NoParty": "Nessun Pokémon nella squadra.",
+      "SwitchTitle": "Cambia Pokémon",
+      "SwitchConfirm": "Vuoi mandare in campo {name}?",
+      "SwitchYes": "Vai!",
+      "SwitchNo": "Annulla",
+      "SwitchChat": "{trainer} ha mandato in campo {name}!",
+      "SwitchNotify": "{name} è ora in campo!"
+    },
+    "Bag": {
+      "Potions": "Medicine",
+      "SmallItems": "Poké Ball",
+      "MainPocket": "Strumenti",
+      "HeldItems": "Strumenti Tenuti",
+      "Badges": "Strumenti Base",
+      "NoItems": "Nessun oggetto utilizzabile.",
+      "UseTitle": "Usa Strumento",
+      "UseConfirm": "Usare {item} su {target}?",
+      "UseYes": "Usa",
+      "UseNo": "Annulla",
+      "UseChat": "{trainer} ha usato {item} su {target}!",
+      "FullHeal": "Cura completa PS",
+      "HealHP": "Cura {hp} PS",
+      "RestoreAwareness": "Ripristina coscienza",
+      "CureAll": "Cura tutti gli stati",
+      "CureStatus": "Cura: {status}"
+    },
+    "Run": {
+      "Title": "Fuga",
+      "Confirm": "Tentare la fuga dalla lotta?",
+      "Yes": "Fuggi!",
+      "No": "Resta",
+      "Success": "Sei fuggito con successo!",
+      "Failure": "Non puoi fuggire!",
+      "CannotFleeTrainer": "Non puoi fuggire da una lotta tra Allenatori!",
+      "GotAway": "Sei fuggito con successo!",
+      "FailedToEscape": "Non sei riuscito a fuggire!"
+    },
+    "Condition": {
+      "Sleep": "Sonno",
+      "Burn": "Bruciatura",
+      "Frozen": "Congelamento",
+      "Paralyzed": "Paralisi",
+      "Poisoned": "Avvelenamento",
+      "Fainted": "Esausto",
+      "Confused": "Confusione",
+      "Flinch": "Tentennamento",
+      "Infatuated": "Infatuazione"
+    },
+    "Warn": {
+      "NoPokemon": "Nessun Pokémon attivo!",
+      "NotEnoughWill": "{move} richiede {cost} Volontà, ma ne rimangono solo {current}.",
+      "PokemonFainted": "{name} è esausto e non può combattere!",
+      "NoTrainer": "Nessun Allenatore trovato!",
+      "NoItemsLeft": "Nessun {name} rimasto!"
+    },
+    "Error": {
+      "MoveNotFound": "Mossa non trovata!",
+      "MoveFailed": "Errore nell'esecuzione della mossa.",
+      "PokemonNotFound": "Pokémon non trovato!",
+      "ItemNotFound": "Strumento non trovato!",
+      "ItemUseFailed": "Errore nell'uso dello strumento."
+    },
+    "Settings": {
+      "EnableHud": "Abilita Combat HUD",
+      "EnableHudHint": "Mostra il Combat HUD in stile Pokémon durante gli scontri.",
+      "HudPosition": "Posizione HUD",
+      "HudPositionHint": "Scegli dove posizionare il Combat HUD sullo schermo.",
+      "HudScale": "Scala HUD",
+      "HudScaleHint": "Regola le dimensioni del Combat HUD (0.5 - 1.5)."
+    },
+    "Keybinding": {
+      "ToggleHud": "Mostra/Nascondi Combat HUD",
+      "ToggleHudHint": "Mostra o nasconde il Combat HUD Pokémon."
+    }
+  }
+}

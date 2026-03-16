@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Running figure with speed lines - Run icon -->
+  <circle cx="36" cy="12" r="6" fill="#fff"/>
+  <path d="M28 22 L38 22 L44 36 L38 36 L42 56 L32 56 L30 40 L26 56 L20 56 L24 36 L18 28 Z"
+        fill="none" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>
+  <!-- Speed lines -->
+  <line x1="46" y1="24" x2="54" y2="20" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="46" y1="28" x2="56" y2="28" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="46" y1="32" x2="54" y2="36" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+</svg>

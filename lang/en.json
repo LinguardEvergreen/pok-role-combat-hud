@@ -1,0 +1,88 @@
+{
+  "POKEHUD": {
+    "Menu": {
+      "Battle": "Battle",
+      "Pokemon": "Pokémon",
+      "Bag": "Bag",
+      "Run": "Run"
+    },
+    "Battle": {
+      "NoMoves": "No moves available."
+    },
+    "Pokemon": {
+      "NoParty": "No Pokémon in party.",
+      "SwitchTitle": "Switch Pokémon",
+      "SwitchConfirm": "Send out {name}?",
+      "SwitchYes": "Go!",
+      "SwitchNo": "Cancel",
+      "SwitchChat": "{trainer} switched to {name}!",
+      "SwitchNotify": "{name} is now in battle!"
+    },
+    "Bag": {
+      "Potions": "Medicine",
+      "SmallItems": "Poké Balls",
+      "MainPocket": "Items",
+      "HeldItems": "Held Items",
+      "Badges": "Key Items",
+      "NoItems": "No usable items.",
+      "UseTitle": "Use Item",
+      "UseConfirm": "Use {item} on {target}?",
+      "UseYes": "Use",
+      "UseNo": "Cancel",
+      "UseChat": "{trainer} used {item} on {target}!",
+      "FullHeal": "Full HP restore",
+      "HealHP": "Heal {hp} HP",
+      "RestoreAwareness": "Restore awareness",
+      "CureAll": "Cure all status",
+      "CureStatus": "Cure: {status}"
+    },
+    "Run": {
+      "Title": "Run Away",
+      "Confirm": "Attempt to flee from battle?",
+      "Yes": "Run!",
+      "No": "Stay",
+      "Success": "Got away safely!",
+      "Failure": "Can't escape!",
+      "CannotFleeTrainer": "Can't run from a Trainer battle!",
+      "GotAway": "Got away safely!",
+      "FailedToEscape": "Couldn't get away!"
+    },
+    "Condition": {
+      "Sleep": "Sleep",
+      "Burn": "Burn",
+      "Frozen": "Frozen",
+      "Paralyzed": "Paralyzed",
+      "Poisoned": "Poisoned",
+      "Fainted": "Fainted",
+      "Confused": "Confused",
+      "Flinch": "Flinch",
+      "Infatuated": "Infatuated"
+    },
+    "Warn": {
+      "NoPokemon": "No active Pokémon!",
+      "NotEnoughWill": "{move} requires {cost} Will, but only {current} remaining.",
+      "PokemonFainted": "{name} has fainted and cannot battle!",
+      "NoTrainer": "No Trainer found!",
+      "NoItemsLeft": "No {name} left!"
+    },
+    "Error": {
+      "MoveNotFound": "Move not found!",
+      "MoveFailed": "Failed to execute move.",
+      "PokemonNotFound": "Pokémon not found!",
+      "ItemNotFound": "Item not found!",
+      "ItemUseFailed": "Failed to use item."
+    },
+    "Settings": {
+      "EnableHud": "Enable Combat HUD",
+      "EnableHudHint": "Show the Pokémon-style Combat HUD during encounters.",
+      "HudPosition": "HUD Position",
+      "HudPositionHint": "Choose where the Combat HUD appears on screen.",
+      "HudScale": "HUD Scale",
+      "HudScaleHint": "Adjust the size of the Combat HUD (0.5 - 1.5)."
+    },
+    "Keybinding": {
+      "ToggleHud": "Toggle Combat HUD",
+      "ToggleHudHint": "Show or hide the Pokémon Combat HUD."
+    }
+  }
+}

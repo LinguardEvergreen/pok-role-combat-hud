@@ -1,0 +1,14 @@
+{{!-- Chat message template for run attempts --}}
+<div class="poke-hud-chat run-message {{#if success}}success{{else}}failure{{/if}}">
+  <h3>{{localize "POKEHUD.Run.Title"}}</h3>
+  <div class="run-roll">
+    <span class="die-result">{{dieResult}}</span>
+    <span class="run-result">
+      {{#if success}}
+        {{localize "POKEHUD.Run.Success"}}
+      {{else}}
+        {{localize "POKEHUD.Run.Failure"}}
+      {{/if}}
+    </span>
+  </div>
+</div>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Pokéball with burst rays - Battle icon -->
+  <circle cx="32" cy="32" r="28" fill="none" stroke="#fff" stroke-width="3"/>
+  <path d="M4 32 L60 32" stroke="#fff" stroke-width="3"/>
+  <circle cx="32" cy="32" r="10" fill="none" stroke="#fff" stroke-width="3"/>
+  <circle cx="32" cy="32" r="5" fill="#fff"/>
+  <!-- Burst rays -->
+  <line x1="14" y1="14" x2="22" y2="22" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="50" y1="14" x2="42" y2="22" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="14" y1="50" x2="22" y2="42" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="50" y1="50" x2="42" y2="42" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+</svg>
