@@ -140,29 +140,43 @@ export function getTrainerForActor(actor) {
 }
 
 /**
- * Get all Pokémon owned by the same user(s) as the Trainer.
- * Searches ALL world actors with type "pokemon" that share at least one
- * Owner-level user with the trainer actor.
+ * Get all Pokémon owned by the current user.
+ * Searches ALL world actors with type "pokemon" where the current user
+ * has OWNER-level permission. For GMs, shows Pokémon that share ownership
+ * with the trainer's owners.
  * @param {Actor} trainer - The Trainer actor
  * @returns {Actor[]} Array of Pokémon actors
  */
 export function getTrainerParty(trainer) {
   if (!trainer || trainer.type !== "trainer") return [];
 
-  // Get all user IDs that have OWNER permission on the trainer
-  const trainerOwners = Object.entries(trainer.ownership)
-    .filter(([id, level]) => level === CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER && id !== "default")
-    .map(([id]) => id);
+  const currentUserId = game.user.id;
 
-  if (trainerOwners.length === 0) return [];
-
-  // Find ALL Pokémon actors in the world owned by the same user(s)
-  return game.actors.filter(a => {
-    if (a.type !== "pokemon") return false;
-    const pokemonOwners = Object.entries(a.ownership)
+  // For GMs: show Pokémon owned by the same users as the trainer
+  if (game.user.isGM) {
+    const trainerOwners = Object.entries(trainer.ownership)
       .filter(([id, level]) => level === CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER && id !== "default")
       .map(([id]) => id);
-    return pokemonOwners.some(o => trainerOwners.includes(o));
+
+    if (trainerOwners.length === 0) {
+      // If no specific owners, show all Pokémon (GM sees all)
+      return game.actors.filter(a => a.type === "pokemon");
+    }
+
+    return game.actors.filter(a => {
+      if (a.type !== "pokemon") return false;
+      const pokemonOwners = Object.entries(a.ownership)
+        .filter(([id, level]) => level === CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER && id !== "default")
+        .map(([id]) => id);
+      return pokemonOwners.some(o => trainerOwners.includes(o));
+    });
+  }
+
+  // For players: show only Pokémon where they have OWNER permission
+  return game.actors.filter(a => {
+    if (a.type !== "pokemon") return false;
+    const ownershipLevel = a.ownership[currentUserId] ?? a.ownership.default ?? 0;
+    return ownershipLevel === CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER;
   });
 }
 

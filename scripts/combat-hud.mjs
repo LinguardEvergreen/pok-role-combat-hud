@@ -55,20 +55,19 @@ export class CombatHUD extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   /**
-   * Get the active actor.
-   * In combat: the active combatant's actor.
-   * Out of combat: the selected token's actor.
+   * Get the active actor based on the selected token.
+   * Always uses the currently selected token, both in and out of combat.
    * @returns {Actor|null}
    */
   get activeActor() {
-    // In combat, use the active combatant
-    if (game.combat?.combatant?.actor) {
-      return game.combat.combatant.actor;
-    }
-    // Out of combat, use the selected token's actor
+    // Always use the selected token's actor
     const controlled = canvas.tokens?.controlled;
     if (controlled?.length === 1) {
       return controlled[0].actor ?? null;
+    }
+    // Fallback: if in combat and no token selected, use the active combatant
+    if (game.combat?.combatant?.actor) {
+      return game.combat.combatant.actor;
     }
     return null;
   }

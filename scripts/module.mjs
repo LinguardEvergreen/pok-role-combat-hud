@@ -150,13 +150,10 @@ Hooks.on("canvasReady", () => {
   }
 });
 
-// Refresh HUD when the selected token changes (for out-of-combat use)
+// Refresh HUD when the selected token changes
 Hooks.on("controlToken", (token, controlled) => {
   if (!game.pokeCombatHUD?.rendered) return;
-  // Only refresh when not in combat (in combat, the active combatant drives the HUD)
-  if (!game.combat) {
-    game.pokeCombatHUD.refresh();
-  }
+  game.pokeCombatHUD.refresh();
 });
 
 /* ---------------------------------------- */
