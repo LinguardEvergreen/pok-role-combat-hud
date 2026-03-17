@@ -87,6 +87,20 @@ export const CONDITION_ICONS = {
 };
 
 /* ---------------------------------------- */
+/*  Trainer Rank Labels                      */
+/* ---------------------------------------- */
+
+export const RANK_LABELS = {
+  starter:   "POKEHUD.Rank.Starter",
+  beginner:  "POKEHUD.Rank.Beginner",
+  amateur:   "POKEHUD.Rank.Amateur",
+  ace:       "POKEHUD.Rank.Ace",
+  pro:       "POKEHUD.Rank.Pro",
+  master:    "POKEHUD.Rank.Master",
+  champion:  "POKEHUD.Rank.Champion"
+};
+
+/* ---------------------------------------- */
 /*  Gear Pocket Labels                       */
 /* ---------------------------------------- */
 

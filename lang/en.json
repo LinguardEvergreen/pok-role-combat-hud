@@ -4,6 +4,8 @@
       "Battle": "Battle",
       "Pokemon": "Pokémon",
       "Bag": "Bag",
+      "TakeCover": "Take Cover",
+      "EnterMelee": "Enter Melee",
       "Run": "Run"
     },
     "Battle": {
@@ -36,6 +38,14 @@
       "CureAll": "Cure all status",
       "CureStatus": "Cure: {status}"
     },
+    "Cover": {
+      "ChatMessage": "takes cover!",
+      "Notify": "{name} is taking cover!"
+    },
+    "Melee": {
+      "ChatMessage": "enters melee combat!",
+      "Notify": "{name} enters melee combat!"
+    },
     "Run": {
       "Title": "Run Away",
       "Confirm": "Attempt to flee from battle?",
@@ -46,6 +56,15 @@
       "CannotFleeTrainer": "Can't run from a Trainer battle!",
       "GotAway": "Got away safely!",
       "FailedToEscape": "Couldn't get away!"
+    },
+    "Rank": {
+      "Starter": "Starter",
+      "Beginner": "Beginner",
+      "Amateur": "Amateur",
+      "Ace": "Ace",
+      "Pro": "Pro",
+      "Master": "Master",
+      "Champion": "Champion"
     },
     "Condition": {
       "Sleep": "Sleep",

@@ -26,6 +26,14 @@
   --run-bg-hover: #1565C0;
   --run-border: #0D47A1;
 
+  --cover-bg: #7E57C2;
+  --cover-bg-hover: #5E35B1;
+  --cover-border: #4527A0;
+
+  --melee-bg: #EF6C00;
+  --melee-bg-hover: #E65100;
+  --melee-border: #BF360C;
+
   /* HP Colors */
   --hp-green: #4CAF50;
   --hp-yellow: #FFC107;
@@ -51,7 +59,6 @@
   transform: scale(var(--hud-scale, 1));
   transform-origin: bottom right;
   transition: transform 0.2s ease;
-  /* Override Foundry's default application styling */
   background: none !important;
   border: none !important;
   box-shadow: none !important;
@@ -77,15 +84,30 @@
 }
 
 .poke-hud-wrapper {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-end;
-  gap: 12px;
   font-family: var(--pokehud-font-ui);
 }
 
 /* ============================================= */
-/*  Portrait Bar                                  */
+/*  HUD Layouts                                   */
+/* ============================================= */
+
+.poke-hud-layout {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.pokemon-layout {
+  animation: slideInUp 0.3s ease-out;
+}
+
+.trainer-layout {
+  animation: slideInUp 0.3s ease-out;
+}
+
+/* ============================================= */
+/*  Portrait Bar (shared between both HUDs)      */
 /* ============================================= */
 
 .poke-hud-portrait {
@@ -95,7 +117,6 @@
   padding: 10px 14px;
   min-width: 260px;
   box-shadow: 0 4px 16px var(--panel-shadow);
-  animation: slideInUp 0.3s ease-out;
 }
 
 .portrait-header {
@@ -154,6 +175,25 @@
   text-transform: uppercase;
   color: #fff;
   letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+/* Trainer Rank Badge */
+.trainer-rank {
+  display: flex;
+  gap: 4px;
+}
+
+.rank-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #fff;
+  letter-spacing: 0.5px;
+  background: linear-gradient(135deg, #7E57C2, #5E35B1);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
@@ -239,173 +279,17 @@
 }
 
 /* ============================================= */
-/*  Main Menu Buttons                             */
+/*  Pokémon HUD: Moves Panel                     */
 /* ============================================= */
 
-.poke-hud-menu {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+.poke-hud-moves {
   animation: slideInRight 0.3s ease-out;
 }
 
-.poke-hud-menu.not-my-turn {
+.poke-hud-moves.not-my-turn {
   opacity: 0.5;
   pointer-events: none;
 }
-
-.hud-btn {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 24px 12px 16px;
-  min-width: 180px;
-  border: 3px solid;
-  border-radius: 10px;
-  cursor: pointer;
-  font-family: var(--pokehud-font);
-  font-size: 14px;
-  color: #fff;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-  transition: all 0.15s ease;
-  position: relative;
-  overflow: hidden;
-  text-align: left;
-}
-
-.hud-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 50%;
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.15), transparent);
-  pointer-events: none;
-}
-
-.hud-btn::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 60px;
-  height: 100%;
-  opacity: 0.15;
-  pointer-events: none;
-}
-
-.hud-btn:hover:not(:disabled) {
-  transform: scale(1.03);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-}
-
-.hud-btn:active:not(:disabled) {
-  transform: scale(0.97);
-}
-
-.hud-btn:disabled {
-  cursor: not-allowed;
-  filter: grayscale(0.5);
-}
-
-.hud-btn.active {
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5), 0 4px 12px rgba(0, 0, 0, 0.4);
-}
-
-/* Button variants */
-.battle-btn {
-  background: linear-gradient(135deg, var(--battle-bg), #d32f2f);
-  border-color: var(--battle-border);
-}
-.battle-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, var(--battle-bg-hover), var(--battle-bg));
-}
-
-.pokemon-btn {
-  background: linear-gradient(135deg, var(--pokemon-bg), #388E3C);
-  border-color: var(--pokemon-border);
-}
-.pokemon-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, var(--pokemon-bg-hover), var(--pokemon-bg));
-}
-
-.bag-btn {
-  background: linear-gradient(135deg, var(--bag-bg), #FF8F00);
-  border-color: var(--bag-border);
-}
-.bag-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, var(--bag-bg-hover), var(--bag-bg));
-}
-
-.run-btn {
-  background: linear-gradient(135deg, var(--run-bg), #1976D2);
-  border-color: var(--run-border);
-}
-.run-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, var(--run-bg-hover), var(--run-bg));
-}
-
-/* Button Icon */
-.btn-icon {
-  width: 32px;
-  height: 32px;
-  flex-shrink: 0;
-  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
-}
-
-.btn-label {
-  flex: 1;
-  letter-spacing: 1px;
-}
-
-/* ============================================= */
-/*  Sub-Panels                                    */
-/* ============================================= */
-
-.poke-hud-panel-wrapper {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  animation: slideInLeft 0.25s ease-out;
-}
-
-.panel-close-btn {
-  background: var(--panel-bg);
-  border: 2px solid var(--panel-border);
-  color: var(--text-dim);
-  font-size: 14px;
-  cursor: pointer;
-  padding: 2px 8px;
-  border-radius: 6px;
-  transition: color 0.15s, background 0.15s;
-  margin-bottom: 4px;
-  line-height: 1.4;
-  align-self: flex-end;
-}
-
-.panel-close-btn:hover {
-  color: var(--text-light);
-  background: rgba(255,255,255,0.15);
-  border-color: var(--text-dim);
-}
-
-.poke-hud-panel {
-  background: var(--panel-bg);
-  border: 2px solid var(--panel-border);
-  border-radius: 12px;
-  padding: 12px;
-  min-width: 320px;
-  max-width: 420px;
-  max-height: 400px;
-  overflow-y: auto;
-  box-shadow: 0 4px 20px var(--panel-shadow);
-}
-
-/* ============================================= */
-/*  Battle Panel: Moves                           */
-/* ============================================= */
 
 .moves-grid {
   display: grid;
@@ -491,6 +375,168 @@
   color: var(--text-dim);
   font-style: italic;
   padding: 20px;
+}
+
+/* ============================================= */
+/*  Trainer HUD: Menu Buttons                    */
+/* ============================================= */
+
+.poke-hud-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  animation: slideInRight 0.3s ease-out;
+}
+
+.poke-hud-menu.not-my-turn {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.hud-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px 10px 14px;
+  min-width: 170px;
+  border: 3px solid;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: var(--pokehud-font);
+  font-size: 12px;
+  color: #fff;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  transition: all 0.15s ease;
+  position: relative;
+  overflow: hidden;
+  text-align: left;
+}
+
+.hud-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.15), transparent);
+  pointer-events: none;
+}
+
+.hud-btn:hover:not(:disabled) {
+  transform: scale(1.03);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.hud-btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.hud-btn:disabled {
+  cursor: not-allowed;
+  filter: grayscale(0.5);
+}
+
+.hud-btn.active {
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5), 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* Button variants */
+.pokemon-btn {
+  background: linear-gradient(135deg, var(--pokemon-bg), #388E3C);
+  border-color: var(--pokemon-border);
+}
+.pokemon-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--pokemon-bg-hover), var(--pokemon-bg));
+}
+
+.bag-btn {
+  background: linear-gradient(135deg, var(--bag-bg), #FF8F00);
+  border-color: var(--bag-border);
+}
+.bag-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--bag-bg-hover), var(--bag-bg));
+}
+
+.cover-btn {
+  background: linear-gradient(135deg, var(--cover-bg), #512DA8);
+  border-color: var(--cover-border);
+}
+.cover-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--cover-bg-hover), var(--cover-bg));
+}
+
+.melee-btn {
+  background: linear-gradient(135deg, var(--melee-bg), #D84315);
+  border-color: var(--melee-border);
+}
+.melee-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--melee-bg-hover), var(--melee-bg));
+}
+
+.run-btn {
+  background: linear-gradient(135deg, var(--run-bg), #1976D2);
+  border-color: var(--run-border);
+}
+.run-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--run-bg-hover), var(--run-bg));
+}
+
+/* Button Icon */
+.btn-icon {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
+}
+
+.btn-label {
+  flex: 1;
+  letter-spacing: 1px;
+}
+
+/* ============================================= */
+/*  Sub-Panels (Trainer only)                    */
+/* ============================================= */
+
+.poke-hud-panel-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  animation: slideInLeft 0.25s ease-out;
+}
+
+.panel-close-btn {
+  background: var(--panel-bg);
+  border: 2px solid var(--panel-border);
+  color: var(--text-dim);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 2px 8px;
+  border-radius: 6px;
+  transition: color 0.15s, background 0.15s;
+  margin-bottom: 4px;
+  line-height: 1.4;
+  align-self: flex-end;
+}
+
+.panel-close-btn:hover {
+  color: var(--text-light);
+  background: rgba(255,255,255,0.15);
+  border-color: var(--text-dim);
+}
+
+.poke-hud-panel {
+  background: var(--panel-bg);
+  border: 2px solid var(--panel-border);
+  border-radius: 12px;
+  padding: 12px;
+  min-width: 320px;
+  max-width: 420px;
+  max-height: 400px;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px var(--panel-shadow);
 }
 
 /* ============================================= */
@@ -583,17 +629,6 @@
 
 .condition-mini {
   font-size: 11px;
-}
-
-.party-type-badge {
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 7px;
-  text-transform: uppercase;
-  color: #fff;
-  font-weight: bold;
-  text-shadow: 0 1px 1px rgba(0,0,0,0.3);
-  flex-shrink: 0;
 }
 
 .no-party {
@@ -725,6 +760,12 @@
   font-size: 14px;
 }
 
+.poke-hud-chat.action-message {
+  flex-direction: column;
+  text-align: center;
+  font-size: 13px;
+}
+
 .run-roll {
   display: flex;
   align-items: center;
@@ -831,7 +872,7 @@ body.poke-hud-active #players {
 /* ============================================= */
 
 @media (max-width: 1200px) {
-  .poke-hud-wrapper {
+  .poke-hud-layout {
     flex-direction: column;
     align-items: flex-end;
   }

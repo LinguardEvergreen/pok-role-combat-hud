@@ -4,7 +4,9 @@
       "Battle": "Lotta",
       "Pokemon": "Pokémon",
       "Bag": "Borsa",
-      "Run": "Fuga"
+      "TakeCover": "Cerca Copertura",
+      "EnterMelee": "Entra in Mischia",
+      "Run": "Fuggi"
     },
     "Battle": {
       "NoMoves": "Nessuna mossa disponibile."
@@ -36,6 +38,14 @@
       "CureAll": "Cura tutti gli stati",
       "CureStatus": "Cura: {status}"
     },
+    "Cover": {
+      "ChatMessage": "cerca copertura!",
+      "Notify": "{name} cerca copertura!"
+    },
+    "Melee": {
+      "ChatMessage": "entra in mischia!",
+      "Notify": "{name} entra in mischia!"
+    },
     "Run": {
       "Title": "Fuga",
       "Confirm": "Tentare la fuga dalla lotta?",
@@ -46,6 +56,15 @@
       "CannotFleeTrainer": "Non puoi fuggire da una lotta tra Allenatori!",
       "GotAway": "Sei fuggito con successo!",
       "FailedToEscape": "Non sei riuscito a fuggire!"
+    },
+    "Rank": {
+      "Starter": "Principiante",
+      "Beginner": "Novizio",
+      "Amateur": "Dilettante",
+      "Ace": "Asso",
+      "Pro": "Professionista",
+      "Master": "Maestro",
+      "Champion": "Campione"
     },
     "Condition": {
       "Sleep": "Sonno",
