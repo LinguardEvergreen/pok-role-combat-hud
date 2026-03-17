@@ -253,8 +253,6 @@
         <span class="btn-label">{{localize "POKEHUD.Menu.Bag"}}</span>
       </button>
 
-      {{!-- Combat-only buttons --}}
-      {{#if inCombat}}
       <button class="hud-btn cover-btn"
               data-action="take-cover"
               {{#unless isMyTurn}}disabled{{/unless}}>
@@ -294,7 +292,6 @@
         </svg>
         <span class="btn-label">{{localize "POKEHUD.Menu.Run"}}</span>
       </button>
-      {{/if}}
     </div>
 
   </div>
