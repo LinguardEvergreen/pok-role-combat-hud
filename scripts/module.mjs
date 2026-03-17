@@ -101,10 +101,10 @@ Hooks.on("createCombat", (combat) => {
   game.pokeCombatHUD.showHUD();
 });
 
-// Hide HUD when combat ends
+// Refresh HUD when combat ends (don't hide - HUD works outside combat too)
 Hooks.on("deleteCombat", (combat) => {
-  if (!game.pokeCombatHUD) return;
-  game.pokeCombatHUD.hideHUD();
+  if (!game.pokeCombatHUD?.rendered) return;
+  game.pokeCombatHUD.refresh();
 });
 
 // Update HUD when combat state changes (turn/round advance)
@@ -118,9 +118,9 @@ Hooks.on("updateCombat", (combat, changed, options, userId) => {
 // Update HUD when an actor is updated (HP, Will, conditions change)
 Hooks.on("updateActor", (actor, changed, options, userId) => {
   if (!game.pokeCombatHUD?.rendered) return;
-  // Check if the updated actor is the active combatant
-  const activeCombatant = game.combat?.combatant;
-  if (activeCombatant?.actor?.id === actor.id) {
+  // Refresh if the updated actor is the one currently shown in the HUD
+  const activeActor = game.pokeCombatHUD.activeActor;
+  if (activeActor?.id === actor.id) {
     game.pokeCombatHUD.refresh();
   }
 });
@@ -128,16 +128,16 @@ Hooks.on("updateActor", (actor, changed, options, userId) => {
 // Update HUD when items change on the active actor (moves added/removed)
 Hooks.on("createItem", (item, options, userId) => {
   if (!game.pokeCombatHUD?.rendered) return;
-  const activeCombatant = game.combat?.combatant;
-  if (activeCombatant?.actor?.id === item.parent?.id) {
+  const activeActor = game.pokeCombatHUD.activeActor;
+  if (activeActor?.id === item.parent?.id) {
     game.pokeCombatHUD.refresh();
   }
 });
 
 Hooks.on("deleteItem", (item, options, userId) => {
   if (!game.pokeCombatHUD?.rendered) return;
-  const activeCombatant = game.combat?.combatant;
-  if (activeCombatant?.actor?.id === item.parent?.id) {
+  const activeActor = game.pokeCombatHUD.activeActor;
+  if (activeActor?.id === item.parent?.id) {
     game.pokeCombatHUD.refresh();
   }
 });
@@ -145,10 +145,17 @@ Hooks.on("deleteItem", (item, options, userId) => {
 // Re-render HUD when canvas is ready (scene change)
 Hooks.on("canvasReady", () => {
   if (!game.pokeCombatHUD) return;
-  if (game.combat && game.settings.get(MODULE_ID, "enableHud")) {
-    game.pokeCombatHUD.showHUD();
-  } else {
-    game.pokeCombatHUD.hideHUD();
+  if (game.pokeCombatHUD.rendered) {
+    game.pokeCombatHUD.refresh();
+  }
+});
+
+// Refresh HUD when the selected token changes (for out-of-combat use)
+Hooks.on("controlToken", (token, controlled) => {
+  if (!game.pokeCombatHUD?.rendered) return;
+  // Only refresh when not in combat (in combat, the active combatant drives the HUD)
+  if (!game.combat) {
+    game.pokeCombatHUD.refresh();
   }
 });
 

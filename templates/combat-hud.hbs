@@ -229,9 +229,9 @@
 
     {{!-- Trainer Action Buttons --}}
     <div class="poke-hud-menu {{#unless isMyTurn}}not-my-turn{{/unless}}">
+      {{!-- Pokémon and Bag: always available --}}
       <button class="hud-btn pokemon-btn {{#if (eq activePanel 'pokemon')}}active{{/if}}"
-              data-action="pokemon"
-              {{#unless isMyTurn}}disabled{{/unless}}>
+              data-action="pokemon">
         <svg class="btn-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
           <circle cx="32" cy="32" r="28" fill="none" stroke="currentColor" stroke-width="3"/>
           <line x1="4" y1="32" x2="60" y2="32" stroke="currentColor" stroke-width="3"/>
@@ -242,8 +242,7 @@
       </button>
 
       <button class="hud-btn bag-btn {{#if (eq activePanel 'bag')}}active{{/if}}"
-              data-action="bag"
-              {{#unless isMyTurn}}disabled{{/unless}}>
+              data-action="bag">
         <svg class="btn-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
           <rect x="12" y="20" width="40" height="36" rx="6" fill="none" stroke="currentColor" stroke-width="3"/>
           <path d="M22 20 Q22 10 32 10 Q42 10 42 20" fill="none" stroke="currentColor" stroke-width="3"/>
@@ -254,6 +253,8 @@
         <span class="btn-label">{{localize "POKEHUD.Menu.Bag"}}</span>
       </button>
 
+      {{!-- Combat-only buttons --}}
+      {{#if inCombat}}
       <button class="hud-btn cover-btn"
               data-action="take-cover"
               {{#unless isMyTurn}}disabled{{/unless}}>
@@ -293,6 +294,7 @@
         </svg>
         <span class="btn-label">{{localize "POKEHUD.Menu.Run"}}</span>
       </button>
+      {{/if}}
     </div>
 
   </div>

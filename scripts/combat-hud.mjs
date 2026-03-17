@@ -55,11 +55,22 @@ export class CombatHUD extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   /**
-   * Get the active combatant's actor.
+   * Get the active actor.
+   * In combat: the active combatant's actor.
+   * Out of combat: the selected token's actor.
    * @returns {Actor|null}
    */
   get activeActor() {
-    return game.combat?.combatant?.actor ?? null;
+    // In combat, use the active combatant
+    if (game.combat?.combatant?.actor) {
+      return game.combat.combatant.actor;
+    }
+    // Out of combat, use the selected token's actor
+    const controlled = canvas.tokens?.controlled;
+    if (controlled?.length === 1) {
+      return controlled[0].actor ?? null;
+    }
+    return null;
   }
 
   /**
@@ -110,9 +121,12 @@ export class CombatHUD extends HandlebarsApplicationMixin(ApplicationV2) {
     const position = game.settings.get(MODULE_ID, "hudPosition");
     const scale = game.settings.get(MODULE_ID, "hudScale");
 
+    const inCombat = !!game.combat;
+
     const context = {
       hudType,
       isMyTurn,
+      inCombat,
       position,
       scale,
       MODULE_ID
@@ -390,7 +404,7 @@ export class CombatHUD extends HandlebarsApplicationMixin(ApplicationV2) {
   toggle() {
     if (this.rendered) {
       this.hideHUD();
-    } else if (game.combat) {
+    } else {
       this.showHUD();
     }
   }

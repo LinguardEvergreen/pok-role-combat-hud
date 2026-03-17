@@ -140,53 +140,43 @@ export function getTrainerForActor(actor) {
 }
 
 /**
- * Get all Pokémon in a Trainer's party.
- * Looks at scene tokens owned by the same player, or actors in the world.
+ * Get all Pokémon owned by the same user(s) as the Trainer.
+ * Searches ALL world actors with type "pokemon" that share at least one
+ * Owner-level user with the trainer actor.
  * @param {Actor} trainer - The Trainer actor
  * @returns {Actor[]} Array of Pokémon actors
  */
 export function getTrainerParty(trainer) {
   if (!trainer || trainer.type !== "trainer") return [];
 
-  const owners = Object.entries(trainer.ownership)
+  // Get all user IDs that have OWNER permission on the trainer
+  const trainerOwners = Object.entries(trainer.ownership)
     .filter(([id, level]) => level === CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER && id !== "default")
     .map(([id]) => id);
 
-  // First try scene tokens
-  const sceneTokens = canvas.scene?.tokens ?? [];
-  const partyFromScene = [];
+  if (trainerOwners.length === 0) return [];
 
-  for (const tokenDoc of sceneTokens) {
-    const actor = tokenDoc.actor;
-    if (!actor || actor.type !== "pokemon") continue;
-
-    const actorOwners = Object.entries(actor.ownership)
-      .filter(([id, level]) => level === CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER && id !== "default")
-      .map(([id]) => id);
-
-    if (actorOwners.some(o => owners.includes(o))) {
-      partyFromScene.push(actor);
-    }
-  }
-
-  if (partyFromScene.length > 0) return partyFromScene;
-
-  // Fallback: look at world actors
+  // Find ALL Pokémon actors in the world owned by the same user(s)
   return game.actors.filter(a => {
     if (a.type !== "pokemon") return false;
-    const actorOwners = Object.entries(a.ownership)
+    const pokemonOwners = Object.entries(a.ownership)
       .filter(([id, level]) => level === CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER && id !== "default")
       .map(([id]) => id);
-    return actorOwners.some(o => owners.includes(o));
+    return pokemonOwners.some(o => trainerOwners.includes(o));
   });
 }
 
 /**
- * Check if the current user controls the active combatant.
+ * Check if the current user can act.
+ * In combat: checks if the user controls the active combatant.
+ * Out of combat: always returns true (free use).
  * @returns {boolean}
  */
 export function isCurrentUserTurn() {
-  const combatant = game.combat?.combatant;
+  // If no combat is active, the user can always act
+  if (!game.combat) return true;
+
+  const combatant = game.combat.combatant;
   if (!combatant) return false;
   if (game.user.isGM) return true;
   return combatant.actor?.isOwner ?? false;
