@@ -1,6 +1,6 @@
 /**
  * PokéRole Combat HUD - Run Panel
- * Handles fleeing from combat.
+ * Handles fleeing from combat using the system's trainerRunAwayFromBattle() method.
  */
 
 export class RunPanel {
@@ -10,6 +10,8 @@ export class RunPanel {
 
   /**
    * Attempt to run from combat.
+   * Delegates to the system's trainerRunAwayFromBattle() method which performs
+   * an opposed roll: (Dexterity + Athletic)d6 vs foe's same pool.
    */
   async onRun() {
     const combat = game.combat;
@@ -18,17 +20,35 @@ export class RunPanel {
     const actor = this.hud.activeActor;
     if (!actor) return;
 
-    // Check if this is a trainer battle (cannot flee from trainer battles by default)
-    const hasTrainerOpponent = combat.combatants.some(c => {
-      if (c.actor?.id === actor.id) return false;
-      return c.actor?.type === "trainer";
-    });
+    try {
+      if (typeof actor.trainerRunAwayFromBattle === "function") {
+        // Use the system's built-in method
+        const result = await actor.trainerRunAwayFromBattle();
 
-    if (hasTrainerOpponent) {
-      ui.notifications.warn(game.i18n.localize("POKEHUD.Run.CannotFleeTrainer"));
-      return;
+        if (result?.escaped) {
+          ui.notifications.info(game.i18n.localize("POKEHUD.Run.GotAway"));
+        } else if (result !== null && result !== undefined) {
+          ui.notifications.warn(game.i18n.localize("POKEHUD.Run.FailedToEscape"));
+        }
+        // result === null means the action was cancelled or not possible
+
+      } else {
+        // Fallback for non-trainer actors or if the method doesn't exist
+        await this.#fallbackRun(actor, combat);
+      }
+    } catch (err) {
+      console.error("pok-role-combat-hud | Error in Run:", err);
+      ui.notifications.error(game.i18n.localize("POKEHUD.Error.ActionFailed"));
     }
+  }
 
+  /**
+   * Fallback run logic for when the system method is not available.
+   * Simple 1d6 roll, success on 4+.
+   * @param {Actor} actor
+   * @param {Combat} combat
+   */
+  async #fallbackRun(actor, combat) {
     // Confirm run
     const confirm = await foundry.applications.api.DialogV2.confirm({
       window: { title: game.i18n.localize("POKEHUD.Run.Title") },
@@ -41,8 +61,6 @@ export class RunPanel {
 
     // Roll to flee: 1d6, success on 4+
     const roll = await new Roll("1d6cs>=4").evaluate();
-
-    // Show roll in chat
     const success = roll.total >= 1;
     const dieResult = roll.dice[0]?.results[0]?.result ?? 0;
 
@@ -68,7 +86,6 @@ export class RunPanel {
     });
 
     if (success) {
-      // Remove the combatant from combat
       const combatant = combat.combatants.find(c => c.actor?.id === actor.id);
       if (combatant) {
         await combatant.delete();
@@ -76,7 +93,6 @@ export class RunPanel {
 
       ui.notifications.info(game.i18n.localize("POKEHUD.Run.GotAway"));
 
-      // If no player combatants remain, end combat
       const playerCombatants = combat.combatants.filter(c => !c.isNPC);
       if (playerCombatants.length === 0) {
         await combat.delete();

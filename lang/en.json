@@ -90,7 +90,10 @@
       "MoveFailed": "Failed to execute move.",
       "PokemonNotFound": "Pokémon not found!",
       "ItemNotFound": "Item not found!",
-      "ItemUseFailed": "Failed to use item."
+      "ItemUseFailed": "Failed to use item.",
+      "ActionFailed": "Action failed.",
+      "SwitchFailed": "Failed to switch Pokémon.",
+      "SystemMethodNotFound": "System method not available."
     },
     "Settings": {
       "EnableHud": "Enable Combat HUD",

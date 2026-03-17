@@ -306,38 +306,44 @@ export class CombatHUD extends HandlebarsApplicationMixin(ApplicationV2) {
 
   /**
    * "Cerca Copertura" - Take Cover action.
-   * Posts a chat message declaring the trainer takes cover.
+   * Delegates to the system's trainerSearchForCover() method.
+   * Rolls (Insight + Alert)d6 success pool, on success sets cover to "full".
    */
   async #onTakeCover() {
     const trainer = this.activeActor;
-    if (!trainer) return;
+    if (!trainer || trainer.type !== "trainer") return;
 
-    await ChatMessage.create({
-      content: `<div class="poke-hud-chat action-message">
-        <strong>${trainer.name}</strong> ${game.i18n.localize("POKEHUD.Cover.ChatMessage")}
-      </div>`,
-      speaker: ChatMessage.getSpeaker({ actor: trainer })
-    });
-
-    ui.notifications.info(game.i18n.format("POKEHUD.Cover.Notify", { name: trainer.name }));
+    try {
+      if (typeof trainer.trainerSearchForCover === "function") {
+        await trainer.trainerSearchForCover();
+      } else {
+        ui.notifications.warn("POKEHUD.Error.SystemMethodNotFound");
+      }
+    } catch (err) {
+      console.error("pok-role-combat-hud | Error in Take Cover:", err);
+      ui.notifications.error(game.i18n.localize("POKEHUD.Error.ActionFailed"));
+    }
   }
 
   /**
    * "Entra in Mischia" - Enter Melee action.
-   * Posts a chat message declaring the trainer enters melee.
+   * Rolls the trainer's initiative (1d6 + Dexterity + Alert).
    */
   async #onEnterMelee() {
     const trainer = this.activeActor;
-    if (!trainer) return;
+    if (!trainer || trainer.type !== "trainer") return;
 
-    await ChatMessage.create({
-      content: `<div class="poke-hud-chat action-message">
-        <strong>${trainer.name}</strong> ${game.i18n.localize("POKEHUD.Melee.ChatMessage")}
-      </div>`,
-      speaker: ChatMessage.getSpeaker({ actor: trainer })
-    });
-
-    ui.notifications.info(game.i18n.format("POKEHUD.Melee.Notify", { name: trainer.name }));
+    try {
+      if (typeof trainer.rollInitiative === "function") {
+        await trainer.rollInitiative();
+        ui.notifications.info(game.i18n.format("POKEHUD.Melee.Notify", { name: trainer.name }));
+      } else {
+        ui.notifications.warn("POKEHUD.Error.SystemMethodNotFound");
+      }
+    } catch (err) {
+      console.error("pok-role-combat-hud | Error in Enter Melee:", err);
+      ui.notifications.error(game.i18n.localize("POKEHUD.Error.ActionFailed"));
+    }
   }
 
   /* ---------------------------------------- */

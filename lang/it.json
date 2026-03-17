@@ -90,7 +90,10 @@
       "MoveFailed": "Errore nell'esecuzione della mossa.",
       "PokemonNotFound": "Pokémon non trovato!",
       "ItemNotFound": "Strumento non trovato!",
-      "ItemUseFailed": "Errore nell'uso dello strumento."
+      "ItemUseFailed": "Errore nell'uso dello strumento.",
+      "ActionFailed": "Azione fallita.",
+      "SwitchFailed": "Errore nel cambio Pokémon.",
+      "SystemMethodNotFound": "Metodo di sistema non disponibile."
     },
     "Settings": {
       "EnableHud": "Abilita Combat HUD",
