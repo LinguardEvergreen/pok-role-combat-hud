@@ -363,6 +363,34 @@
 /*  Sub-Panels                                    */
 /* ============================================= */
 
+.poke-hud-panel-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  animation: slideInLeft 0.25s ease-out;
+}
+
+.panel-close-btn {
+  background: var(--panel-bg);
+  border: 2px solid var(--panel-border);
+  color: var(--text-dim);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 2px 8px;
+  border-radius: 6px;
+  transition: color 0.15s, background 0.15s;
+  margin-bottom: 4px;
+  line-height: 1.4;
+  align-self: flex-end;
+}
+
+.panel-close-btn:hover {
+  color: var(--text-light);
+  background: rgba(255,255,255,0.15);
+  border-color: var(--text-dim);
+}
+
 .poke-hud-panel {
   background: var(--panel-bg);
   border: 2px solid var(--panel-border);
@@ -372,32 +400,7 @@
   max-width: 420px;
   max-height: 400px;
   overflow-y: auto;
-  overflow-x: hidden;
   box-shadow: 0 4px 20px var(--panel-shadow);
-  position: relative;
-  animation: slideInLeft 0.25s ease-out;
-}
-
-.panel-close-btn {
-  position: absolute;
-  top: -32px;
-  right: 4px;
-  background: var(--panel-bg);
-  border: 2px solid var(--panel-border);
-  color: var(--text-dim);
-  font-size: 14px;
-  cursor: pointer;
-  padding: 2px 8px;
-  border-radius: 6px;
-  transition: color 0.15s, background 0.15s;
-  z-index: 1;
-  line-height: 1.4;
-}
-
-.panel-close-btn:hover {
-  color: var(--text-light);
-  background: rgba(255,255,255,0.15);
-  border-color: var(--text-dim);
 }
 
 /* ============================================= */
@@ -512,7 +515,6 @@
   transition: all 0.15s ease;
   text-align: left;
   color: var(--text-light);
-  overflow: hidden;
 }
 
 .party-member:hover:not(:disabled) {
@@ -537,16 +539,12 @@
 .party-sprite {
   width: 48px;
   height: 48px;
-  min-width: 48px;
-  min-height: 48px;
-  max-width: 48px;
-  max-height: 48px;
   border-radius: 6px;
   border: 1px solid var(--panel-border);
   background: rgba(255,255,255,0.05);
-  object-fit: contain;
+  object-fit: cover;
+  object-position: center top;
   flex-shrink: 0;
-  overflow: hidden;
 }
 
 .party-info {

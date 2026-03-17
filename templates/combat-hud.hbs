@@ -59,8 +59,9 @@
 
   {{!-- Sub-Panel Container --}}
   {{#if activePanel}}
-  <div class="poke-hud-panel panel-{{activePanel}}">
+  <div class="poke-hud-panel-wrapper">
     <button class="panel-close-btn" data-action="close-panel" title="Close">✕</button>
+    <div class="poke-hud-panel panel-{{activePanel}}">
 
     {{!-- Battle Panel: Move Selection --}}
     {{#if (eq activePanel "battle")}}
@@ -163,6 +164,7 @@
       {{/if}}
     </div>
     {{/if}}
+    </div>
   </div>
   {{/if}}
 
