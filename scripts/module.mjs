@@ -163,19 +163,21 @@ Hooks.on("controlToken", (token, controlled) => {
 Hooks.on("getSceneControlButtons", (controls) => {
   if (game.system.id !== "pok-role-system") return;
 
-  const tokenControls = controls.find(c => c.name === "token");
+  // FoundryVTT v13: controls is an object keyed by name, tools is also an object
+  const tokenControls = controls.tokens;
   if (!tokenControls) return;
 
-  tokenControls.tools.push({
+  tokenControls.tools.pokeCombatHud = {
     name: "pokeCombatHud",
     title: "POKEHUD.Keybinding.ToggleHud",
     icon: "fas fa-gamepad",
+    order: Object.keys(tokenControls.tools).length,
     button: true,
-    onClick: () => {
+    onChange: () => {
       if (game.pokeCombatHUD) {
         game.pokeCombatHUD.toggle();
       }
     },
     visible: true
-  });
+  };
 });
