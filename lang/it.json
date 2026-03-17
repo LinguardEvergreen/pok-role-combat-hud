@@ -8,6 +8,7 @@
       "EnterMelee": "Entra in Mischia",
       "Run": "Fuggi"
     },
+    "Refresh": "Aggiorna HUD",
     "Battle": {
       "NoMoves": "Nessuna mossa disponibile."
     },

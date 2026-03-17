@@ -18,7 +18,7 @@ export class BattlePanel {
   getMoves(pokemon) {
     if (!pokemon) return [];
 
-    const moves = pokemon.items.filter(i => i.type === "move");
+    const moves = pokemon.items.filter(i => i.type === "move" && i.system.isUsable !== false);
     const will = pokemon.system.resources?.will ?? { value: 0, max: 0 };
 
     return moves.map(move => {

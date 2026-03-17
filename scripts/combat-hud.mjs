@@ -292,6 +292,12 @@ export class CombatHUD extends HandlebarsApplicationMixin(ApplicationV2) {
       e.preventDefault();
       this.#closePanel();
     });
+
+    // Refresh HUD button
+    html.querySelector('[data-action="refresh-hud"]')?.addEventListener("click", (e) => {
+      e.preventDefault();
+      this.refresh();
+    });
   }
 
   /* ---------------------------------------- */

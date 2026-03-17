@@ -160,6 +160,31 @@
   color: var(--text-dim);
 }
 
+/* Refresh Button */
+.portrait-refresh-btn {
+  background: none;
+  border: 1px solid var(--panel-border);
+  color: var(--text-dim);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 4px;
+  transition: color 0.15s, background 0.15s, border-color 0.15s;
+  flex-shrink: 0;
+  line-height: 1;
+  align-self: flex-start;
+}
+
+.portrait-refresh-btn:hover {
+  color: var(--text-light);
+  background: rgba(255,255,255,0.1);
+  border-color: var(--text-dim);
+}
+
+.portrait-refresh-btn:active {
+  transform: rotate(180deg);
+}
+
 /* Type Badges */
 .type-badges {
   display: flex;
@@ -282,11 +307,16 @@
 /*  Pokémon HUD: Moves Panel                     */
 /* ============================================= */
 
-.poke-hud-moves {
+.poke-hud-moves-panel {
+  background: var(--panel-bg);
+  border: 2px solid var(--panel-border);
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 4px 16px var(--panel-shadow);
   animation: slideInRight 0.3s ease-out;
 }
 
-.poke-hud-moves.not-my-turn {
+.poke-hud-moves-panel.not-my-turn {
   opacity: 0.5;
   pointer-events: none;
 }

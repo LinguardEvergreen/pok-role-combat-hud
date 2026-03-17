@@ -151,3 +151,27 @@ Hooks.on("canvasReady", () => {
     game.pokeCombatHUD.hideHUD();
   }
 });
+
+/* ---------------------------------------- */
+/*  Token Controls: Toggle HUD Button       */
+/* ---------------------------------------- */
+
+Hooks.on("getSceneControlButtons", (controls) => {
+  if (game.system.id !== "pok-role-system") return;
+
+  const tokenControls = controls.find(c => c.name === "token");
+  if (!tokenControls) return;
+
+  tokenControls.tools.push({
+    name: "pokeCombatHud",
+    title: "POKEHUD.Keybinding.ToggleHud",
+    icon: "fas fa-gamepad",
+    button: true,
+    onClick: () => {
+      if (game.pokeCombatHUD) {
+        game.pokeCombatHUD.toggle();
+      }
+    },
+    visible: true
+  });
+});

@@ -8,6 +8,7 @@
       "EnterMelee": "Enter Melee",
       "Run": "Run"
     },
+    "Refresh": "Refresh HUD",
     "Battle": {
       "NoMoves": "No moves available."
     },

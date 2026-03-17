@@ -29,6 +29,9 @@
             {{/if}}
           </div>
         </div>
+        <button class="portrait-refresh-btn" data-action="refresh-hud" title="{{localize 'POKEHUD.Refresh'}}">
+          <i class="fas fa-sync-alt"></i>
+        </button>
       </div>
 
       {{!-- HP Bar --}}
@@ -59,8 +62,8 @@
       {{/if}}
     </div>
 
-    {{!-- Moves Grid (always visible, beside portrait) --}}
-    <div class="poke-hud-moves {{#unless isMyTurn}}not-my-turn{{/unless}}">
+    {{!-- Moves Container (styled like portrait panel) --}}
+    <div class="poke-hud-moves-panel {{#unless isMyTurn}}not-my-turn{{/unless}}">
       {{#if moves.length}}
       <div class="moves-grid">
         {{#each moves}}
@@ -116,6 +119,9 @@
           </div>
           {{/if}}
         </div>
+        <button class="portrait-refresh-btn" data-action="refresh-hud" title="{{localize 'POKEHUD.Refresh'}}">
+          <i class="fas fa-sync-alt"></i>
+        </button>
       </div>
 
       {{!-- HP Bar --}}
@@ -149,7 +155,7 @@
     {{!-- Sub-Panel (for Pokémon party or Bag) --}}
     {{#if activePanel}}
     <div class="poke-hud-panel-wrapper">
-      <button class="panel-close-btn" data-action="close-panel" title="Close">✕</button>
+      <button class="panel-close-btn" data-action="close-panel" title="Close">&#x2715;</button>
       <div class="poke-hud-panel panel-{{activePanel}}">
 
       {{!-- Pokémon Panel: Party --}}
