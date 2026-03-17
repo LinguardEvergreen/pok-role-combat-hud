@@ -806,6 +806,18 @@
 }
 
 /* ============================================= */
+/*  Hide Foundry UI when HUD is active            */
+/* ============================================= */
+
+body.poke-hud-active #hotbar {
+  display: none !important;
+}
+
+body.poke-hud-active #players {
+  display: none !important;
+}
+
+/* ============================================= */
 /*  Responsive / Small Screens                    */
 /* ============================================= */
 

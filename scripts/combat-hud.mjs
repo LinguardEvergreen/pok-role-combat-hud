@@ -276,6 +276,9 @@ export class CombatHUD extends HandlebarsApplicationMixin(ApplicationV2) {
     if (this.element && !uiTop.contains(this.element)) {
       uiTop.appendChild(this.element);
     }
+
+    // Hide Foundry hotbar and player list
+    document.body.classList.add("poke-hud-active");
   }
 
   /**
@@ -283,6 +286,7 @@ export class CombatHUD extends HandlebarsApplicationMixin(ApplicationV2) {
    */
   hideHUD() {
     this.#activePanel = null;
+    document.body.classList.remove("poke-hud-active");
     this.close();
   }
 
