@@ -35,7 +35,10 @@ Hooks.once("init", () => {
       "bottom-left": "Bottom Left",
       "bottom-center": "Bottom Center"
     },
-    default: "bottom-right"
+    default: "bottom-right",
+    onChange: () => {
+      if (game.pokeCombatHUD?.rendered) game.pokeCombatHUD.render();
+    }
   });
 
   game.settings.register(MODULE_ID, "hudScale", {
