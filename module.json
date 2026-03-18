@@ -2,7 +2,7 @@
   "id": "pok-role-combat-hud",
   "title": "PokéRole Combat HUD",
   "description": "A Pokémon-themed Combat HUD overlay for the PokéRole system. Displays Battle, Pokémon, Bag, and Run buttons during combat encounters, styled after the classic Pokémon game battle interface.",
-  "version": "2.4.1",
+  "version": "2.4.2",
   "authors": [
     {
       "name": "LinguardEvergreen",
@@ -44,5 +44,5 @@
   ],
   "url": "https://github.com/LinguardEvergreen/pok-role-combat-hud",
   "manifest": "https://raw.githubusercontent.com/LinguardEvergreen/pok-role-combat-hud/main/module.json",
-  "download": "https://github.com/LinguardEvergreen/pok-role-combat-hud/archive/refs/tags/v2.4.1.zip"
+  "download": "https://github.com/LinguardEvergreen/pok-role-combat-hud/archive/refs/tags/v2.4.2.zip"
 }
