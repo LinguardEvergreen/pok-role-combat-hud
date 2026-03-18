@@ -352,7 +352,17 @@ export class CombatHUD extends HandlebarsApplicationMixin(ApplicationV2) {
 
     try {
       if (typeof trainer.trainerEnterFray === "function") {
+        const wasInFray = typeof trainer.isTrainerInFray === "function" && trainer.isTrainerInFray();
         await trainer.trainerEnterFray();
+
+        // If trainer left the fray, remove from turn order
+        if (wasInFray && game.combat) {
+          const combatant = game.combat.combatants.find(c => c.actor?.id === trainer.id);
+          if (combatant) {
+            await combatant.delete();
+          }
+        }
+
         this.refresh();
       } else {
         ui.notifications.warn("POKEHUD.Error.SystemMethodNotFound");
