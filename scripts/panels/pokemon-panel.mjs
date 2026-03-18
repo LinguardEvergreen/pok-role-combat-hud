@@ -75,35 +75,35 @@ export class PokemonPanel {
 
     const content = `
       <p>${game.i18n.format("POKEHUD.Pokemon.ReplacePrompt", { name: newPokemon.name })}</p>
-      <form>
-        <div class="form-group">
-          <label>${game.i18n.localize("POKEHUD.Pokemon.ReplaceLabel")}</label>
-          <select name="pokemonId">${options}</select>
-        </div>
-      </form>
+      <div class="form-group">
+        <label>${game.i18n.localize("POKEHUD.Pokemon.ReplaceLabel")}</label>
+        <select id="poke-hud-replace-select">${options}</select>
+      </div>
     `;
 
-    return new Promise((resolve) => {
-      new foundry.applications.api.DialogV2({
-        window: { title: game.i18n.localize("POKEHUD.Pokemon.SwitchTitle") },
-        content,
-        buttons: [{
-          action: "confirm",
-          label: game.i18n.localize("POKEHUD.Pokemon.SwitchYes"),
-          default: true,
-          callback: (event, button, dialog) => {
-            const form = button.closest(".dialog-v2")?.querySelector("form") ?? dialog.querySelector("form");
-            const select = form?.querySelector('select[name="pokemonId"]');
-            resolve(select?.value ?? null);
-          }
-        }, {
-          action: "cancel",
-          label: game.i18n.localize("POKEHUD.Pokemon.SwitchNo"),
-          callback: () => resolve(null)
-        }],
-        close: () => resolve(null)
-      }).render({ force: true });
+    const result = await foundry.applications.api.DialogV2.wait({
+      window: { title: game.i18n.localize("POKEHUD.Pokemon.SwitchTitle") },
+      content,
+      buttons: [{
+        action: "confirm",
+        label: game.i18n.localize("POKEHUD.Pokemon.SwitchYes"),
+        default: true
+      }, {
+        action: "cancel",
+        label: game.i18n.localize("POKEHUD.Pokemon.SwitchNo")
+      }],
+      render: (event, html) => {
+        // Store reference to the select element on the dialog
+        this._replaceSelect = html.querySelector("#poke-hud-replace-select");
+      },
+      close: () => null
     });
+
+    if (result !== "confirm") return null;
+
+    const selectedId = this._replaceSelect?.value ?? null;
+    this._replaceSelect = null;
+    return selectedId;
   }
 
   /**
