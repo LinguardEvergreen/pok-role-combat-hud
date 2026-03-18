@@ -19,7 +19,15 @@ export class PokemonPanel {
   getParty(trainer, activePokemon) {
     const party = getTrainerParty(trainer);
 
-    return party.map(pokemon => {
+    // Filter out Pokémon already in the turn order
+    const combatantActorIds = new Set(
+      (game.combat?.combatants ?? [])
+        .filter(c => c.actor?.type === "pokemon")
+        .map(c => c.actor.id)
+    );
+    const availableParty = party.filter(p => !combatantActorIds.has(p.id));
+
+    return availableParty.map(pokemon => {
       const hp = pokemon.system.resources?.hp ?? { value: 0, max: 0 };
       const will = pokemon.system.resources?.will ?? { value: 0, max: 0 };
       const types = pokemon.system.types ?? {};
