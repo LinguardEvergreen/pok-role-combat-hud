@@ -140,44 +140,21 @@ export function getTrainerForActor(actor) {
 }
 
 /**
- * Get all Pokémon owned by the current user.
- * Searches ALL world actors with type "pokemon" where the current user
- * has OWNER-level permission. For GMs, shows Pokémon that share ownership
- * with the trainer's owners.
+ * Get the Pokémon in the trainer's "Squadra" (Party) tab.
+ * Reads from the trainer's system.party field, which is an array of actor IDs.
  * @param {Actor} trainer - The Trainer actor
- * @returns {Actor[]} Array of Pokémon actors
+ * @returns {Actor[]} Array of Pokémon actors in the party
  */
 export function getTrainerParty(trainer) {
   if (!trainer || trainer.type !== "trainer") return [];
 
-  const currentUserId = game.user.id;
+  const partyIds = trainer.system.party ?? [];
+  if (!Array.isArray(partyIds) || partyIds.length === 0) return [];
 
-  // For GMs: show Pokémon owned by the same users as the trainer
-  if (game.user.isGM) {
-    const trainerOwners = Object.entries(trainer.ownership)
-      .filter(([id, level]) => level === CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER && id !== "default")
-      .map(([id]) => id);
-
-    if (trainerOwners.length === 0) {
-      // If no specific owners, show all Pokémon (GM sees all)
-      return game.actors.filter(a => a.type === "pokemon");
-    }
-
-    return game.actors.filter(a => {
-      if (a.type !== "pokemon") return false;
-      const pokemonOwners = Object.entries(a.ownership)
-        .filter(([id, level]) => level === CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER && id !== "default")
-        .map(([id]) => id);
-      return pokemonOwners.some(o => trainerOwners.includes(o));
-    });
-  }
-
-  // For players: show only Pokémon where they have OWNER permission
-  return game.actors.filter(a => {
-    if (a.type !== "pokemon") return false;
-    const ownershipLevel = a.ownership[currentUserId] ?? a.ownership.default ?? 0;
-    return ownershipLevel === CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER;
-  });
+  // Resolve actor IDs to actual actors, filtering out any that no longer exist
+  return partyIds
+    .map(id => game.actors.get(id))
+    .filter(a => a && a.type === "pokemon");
 }
 
 /**

@@ -112,12 +112,14 @@ export class BattlePanel {
       return;
     }
 
-    // Call the system's rollMove method
+    // Call the system's queueMove method (adds to Move Queue during combat, rolls directly outside combat)
     try {
-      if (typeof pokemon.rollMove === "function") {
+      if (typeof pokemon.queueMove === "function") {
+        await pokemon.queueMove(moveId);
+      } else if (typeof pokemon.rollMove === "function") {
+        // Fallback: direct roll if queueMove is not available
         await pokemon.rollMove(moveId);
       } else {
-        // Fallback: open the move sheet or post to chat
         move.sheet?.render(true);
       }
     } catch (err) {

@@ -19,7 +19,9 @@
       "SwitchYes": "Go!",
       "SwitchNo": "Cancel",
       "SwitchChat": "{trainer} switched to {name}!",
-      "SwitchNotify": "{name} is now in battle!"
+      "SwitchNotify": "{name} is now in battle!",
+      "ReplacePrompt": "Which Pokémon do you want to replace with {name}?",
+      "ReplaceLabel": "Pokémon to replace"
     },
     "Bag": {
       "Potions": "Medicine",

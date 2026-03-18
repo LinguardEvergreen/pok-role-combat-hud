@@ -3,7 +3,7 @@
  * Handles party display and Pokémon switching with full token/combat management.
  */
 
-import { TYPE_COLORS, getHpColorClass, getHpPercent, getTrainerParty, CONDITION_ICONS } from "../helpers.mjs";
+import { TYPE_COLORS, getHpColorClass, getHpPercent, getTrainerParty, CONDITION_ICONS, getTrainerForActor } from "../helpers.mjs";
 
 export class PokemonPanel {
   constructor(hud) {
@@ -61,6 +61,52 @@ export class PokemonPanel {
   }
 
   /**
+   * Show a dialog asking which Pokémon to replace (for double/triple battles).
+   * @param {Combatant[]} ownedCombatants - The trainer's Pokémon combatants in battle
+   * @param {Actor} newPokemon - The Pokémon being sent out
+   * @returns {Promise<string|null>} The actor ID of the Pokémon to replace, or null if cancelled
+   */
+  async #askWhichPokemonToReplace(ownedCombatants, newPokemon) {
+    const options = ownedCombatants.map(c => {
+      const actor = c.actor;
+      const hp = actor.system.resources?.hp ?? { value: 0, max: 0 };
+      return `<option value="${actor.id}">${actor.name} (HP: ${hp.value}/${hp.max})</option>`;
+    }).join("");
+
+    const content = `
+      <p>${game.i18n.format("POKEHUD.Pokemon.ReplacePrompt", { name: newPokemon.name })}</p>
+      <form>
+        <div class="form-group">
+          <label>${game.i18n.localize("POKEHUD.Pokemon.ReplaceLabel")}</label>
+          <select name="pokemonId">${options}</select>
+        </div>
+      </form>
+    `;
+
+    return new Promise((resolve) => {
+      new foundry.applications.api.DialogV2({
+        window: { title: game.i18n.localize("POKEHUD.Pokemon.SwitchTitle") },
+        content,
+        buttons: [{
+          action: "confirm",
+          label: game.i18n.localize("POKEHUD.Pokemon.SwitchYes"),
+          default: true,
+          callback: (event, button, dialog) => {
+            const form = button.closest(".dialog-v2")?.querySelector("form") ?? dialog.querySelector("form");
+            const select = form?.querySelector('select[name="pokemonId"]');
+            resolve(select?.value ?? null);
+          }
+        }, {
+          action: "cancel",
+          label: game.i18n.localize("POKEHUD.Pokemon.SwitchNo"),
+          callback: () => resolve(null)
+        }],
+        close: () => resolve(null)
+      }).render({ force: true });
+    });
+  }
+
+  /**
    * Switch to a different Pokémon.
    * Removes the current Pokémon's token from the scene and combat,
    * places the new Pokémon's token, adds it to combat, and rolls initiative.
@@ -78,6 +124,36 @@ export class PokemonPanel {
       return;
     }
 
+    const combat = game.combat;
+    const scene = canvas.scene;
+    const trainer = this.hud.trainer;
+
+    // Find all Pokémon owned by this trainer that are in the turn order
+    let pokemonToReplace = null;
+
+    if (combat && trainer) {
+      const party = getTrainerParty(trainer);
+      const partyIds = new Set(party.map(p => p.id));
+
+      const ownedCombatants = combat.combatants.filter(c =>
+        c.actor?.type === "pokemon" && partyIds.has(c.actor.id)
+      );
+
+      if (ownedCombatants.length >= 2) {
+        // Double/Triple battle: ask which Pokémon to replace
+        const chosenId = await this.#askWhichPokemonToReplace(ownedCombatants, newPokemon);
+        if (!chosenId) return; // User cancelled
+        pokemonToReplace = game.actors.get(chosenId);
+      } else if (ownedCombatants.length === 1) {
+        pokemonToReplace = ownedCombatants[0].actor;
+      }
+    }
+
+    // If no combat or no combatants found, fall back to activePokemon
+    if (!pokemonToReplace) {
+      pokemonToReplace = this.hud.activePokemon;
+    }
+
     // Confirm the switch
     const confirm = await foundry.applications.api.DialogV2.confirm({
       window: { title: game.i18n.localize("POKEHUD.Pokemon.SwitchTitle") },
@@ -88,24 +164,19 @@ export class PokemonPanel {
 
     if (!confirm) return;
 
-    const combat = game.combat;
-    const scene = canvas.scene;
-    const trainer = this.hud.trainer;
-
     try {
-      // 1. Find the current active Pokémon's token and combatant
-      const currentPokemon = this.hud.activePokemon;
+      // 1. Find the Pokémon to replace's token and combatant
       let spawnPosition = { x: 0, y: 0 };
 
-      if (currentPokemon && scene) {
-        const currentToken = scene.tokens.find(t => t.actor?.id === currentPokemon.id);
+      if (pokemonToReplace && scene) {
+        const currentToken = scene.tokens.find(t => t.actor?.id === pokemonToReplace.id);
         if (currentToken) {
           // Save position for the new token
           spawnPosition = { x: currentToken.x, y: currentToken.y };
 
           // Remove current Pokémon from combat
           if (combat) {
-            const currentCombatant = combat.combatants.find(c => c.actor?.id === currentPokemon.id);
+            const currentCombatant = combat.combatants.find(c => c.actor?.id === pokemonToReplace.id);
             if (currentCombatant) {
               await currentCombatant.delete();
             }

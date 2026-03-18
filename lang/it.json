@@ -19,7 +19,9 @@
       "SwitchYes": "Vai!",
       "SwitchNo": "Annulla",
       "SwitchChat": "{trainer} ha mandato in campo {name}!",
-      "SwitchNotify": "{name} è ora in campo!"
+      "SwitchNotify": "{name} è ora in campo!",
+      "ReplacePrompt": "Quale Pokémon vuoi sostituire con {name}?",
+      "ReplaceLabel": "Pokémon da sostituire"
     },
     "Bag": {
       "Potions": "Medicine",
