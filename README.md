@@ -6,7 +6,7 @@ Replaces the default combat interface with the classic Pokémon battle menu feat
 
 ![FoundryVTT v13](https://img.shields.io/badge/FoundryVTT-v13.351-green)
 ![System](https://img.shields.io/badge/System-pok--role--system-red)
-![Version](https://img.shields.io/badge/Version-2.3.5-blue)
+![Version](https://img.shields.io/badge/Version-3.0.1-blue)
 
 ---
 
