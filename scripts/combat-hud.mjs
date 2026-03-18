@@ -192,6 +192,8 @@ export class CombatHUD extends HandlebarsApplicationMixin(ApplicationV2) {
     const conditions = trainer.system.conditions ?? {};
     const rank = trainer.system.cardRank ?? "starter";
 
+    const inFray = typeof trainer.isTrainerInFray === "function" ? trainer.isTrainerInFray() : false;
+
     return {
       name: trainer.name,
       img: trainer.img,
@@ -202,7 +204,8 @@ export class CombatHUD extends HandlebarsApplicationMixin(ApplicationV2) {
       hpColor: getHpColorClass(hp.value, hp.max),
       rank,
       rankLabel: game.i18n.localize(RANK_LABELS[rank] ?? RANK_LABELS.starter),
-      conditions: this.#getActiveConditions(conditions)
+      conditions: this.#getActiveConditions(conditions),
+      inFray
     };
   }
 
@@ -339,22 +342,23 @@ export class CombatHUD extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   /**
-   * "Entra in Mischia" - Enter Melee action.
-   * Rolls the trainer's initiative (1d6 + Dexterity + Alert).
+   * "Entra in Mischia" / "Esci dalla Mischia" - Toggle Fray action.
+   * Delegates to the system's trainerEnterFray() which toggles fray state,
+   * manages combatant, and rolls initiative.
    */
   async #onEnterMelee() {
     const trainer = this.activeActor;
     if (!trainer || trainer.type !== "trainer") return;
 
     try {
-      if (typeof trainer.rollInitiative === "function") {
-        await trainer.rollInitiative();
-        ui.notifications.info(game.i18n.format("POKEHUD.Melee.Notify", { name: trainer.name }));
+      if (typeof trainer.trainerEnterFray === "function") {
+        await trainer.trainerEnterFray();
+        this.refresh();
       } else {
         ui.notifications.warn("POKEHUD.Error.SystemMethodNotFound");
       }
     } catch (err) {
-      console.error("pok-role-combat-hud | Error in Enter Melee:", err);
+      console.error("pok-role-combat-hud | Error in Toggle Fray:", err);
       ui.notifications.error(game.i18n.localize("POKEHUD.Error.ActionFailed"));
     }
   }

@@ -265,7 +265,7 @@
         <span class="btn-label">{{localize "POKEHUD.Menu.TakeCover"}}</span>
       </button>
 
-      <button class="hud-btn melee-btn"
+      <button class="hud-btn melee-btn {{#if trainerData.inFray}}active{{/if}}"
               data-action="enter-melee"
               {{#unless isMyTurn}}disabled{{/unless}}>
         <svg class="btn-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
@@ -276,7 +276,7 @@
           <path d="M6 24 L14 20 L16 26 Z" fill="currentColor"/>
           <path d="M58 24 L50 20 L48 26 Z" fill="currentColor"/>
         </svg>
-        <span class="btn-label">{{localize "POKEHUD.Menu.EnterMelee"}}</span>
+        <span class="btn-label">{{#if trainerData.inFray}}{{localize "POKEHUD.Menu.LeaveMelee"}}{{else}}{{localize "POKEHUD.Menu.EnterMelee"}}{{/if}}</span>
       </button>
 
       <button class="hud-btn run-btn"

@@ -6,6 +6,7 @@
       "Bag": "Bag",
       "TakeCover": "Take Cover",
       "EnterMelee": "Enter Melee",
+      "LeaveMelee": "Leave Melee",
       "Run": "Run"
     },
     "Refresh": "Refresh HUD",

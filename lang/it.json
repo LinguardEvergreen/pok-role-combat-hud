@@ -6,6 +6,7 @@
       "Bag": "Borsa",
       "TakeCover": "Cerca Copertura",
       "EnterMelee": "Entra in Mischia",
+      "LeaveMelee": "Esci dalla Mischia",
       "Run": "Fuggi"
     },
     "Refresh": "Aggiorna HUD",
