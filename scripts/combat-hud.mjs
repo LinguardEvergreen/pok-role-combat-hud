@@ -314,6 +314,12 @@ export class CombatHUD extends HandlebarsApplicationMixin(ApplicationV2) {
       e.preventDefault();
       this.refresh();
     });
+
+    // Reset Actions button
+    html.querySelector('[data-action="reset-actions"]')?.addEventListener("click", (e) => {
+      e.preventDefault();
+      this.#onResetActions();
+    });
   }
 
   /* ---------------------------------------- */
@@ -369,6 +375,28 @@ export class CombatHUD extends HandlebarsApplicationMixin(ApplicationV2) {
       }
     } catch (err) {
       console.error("pok-role-combat-hud | Error in Toggle Fray:", err);
+      ui.notifications.error(game.i18n.localize("POKEHUD.Error.ActionFailed"));
+    }
+  }
+
+  /**
+   * Reset action counter for the active Pokémon.
+   * Calls the system's resetActionCounter() method.
+   */
+  async #onResetActions() {
+    const actor = this.activeActor;
+    if (!actor || actor.type !== "pokemon") return;
+
+    try {
+      if (typeof actor.resetActionCounter === "function") {
+        await actor.resetActionCounter();
+        ui.notifications.info(game.i18n.format("POKEHUD.Menu.ResetActionsNotify", { name: actor.name }));
+        this.refresh();
+      } else {
+        ui.notifications.warn(game.i18n.localize("POKEHUD.Error.SystemMethodNotFound"));
+      }
+    } catch (err) {
+      console.error("pok-role-combat-hud | Error resetting actions:", err);
       ui.notifications.error(game.i18n.localize("POKEHUD.Error.ActionFailed"));
     }
   }

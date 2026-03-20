@@ -513,6 +513,33 @@
   background: linear-gradient(135deg, var(--run-bg-hover), var(--run-bg));
 }
 
+/* Reset Actions Button (between portrait and moves panel) */
+.reset-actions-btn {
+  background: linear-gradient(135deg, #546E7A, #37474F);
+  border: 2px solid #263238;
+  color: #fff;
+  font-family: var(--pokehud-font-ui);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+  min-width: 120px;
+  align-self: center;
+}
+.reset-actions-btn:hover {
+  background: linear-gradient(135deg, #455A64, #546E7A);
+  transform: scale(1.05);
+}
+.reset-actions-btn i {
+  font-size: 12px;
+}
+
 /* Button Icon */
 .btn-icon {
   width: 28px;

@@ -7,7 +7,9 @@
       "TakeCover": "Cerca Copertura",
       "EnterMelee": "Entra in Mischia",
       "LeaveMelee": "Esci dalla Mischia",
-      "Run": "Fuggi"
+      "Run": "Fuggi",
+      "ResetActions": "Reset Azioni",
+      "ResetActionsNotify": "Le azioni di {name} sono state resettate!"
     },
     "Refresh": "Aggiorna HUD",
     "Battle": {

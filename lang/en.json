@@ -7,7 +7,9 @@
       "TakeCover": "Take Cover",
       "EnterMelee": "Enter Melee",
       "LeaveMelee": "Leave Melee",
-      "Run": "Run"
+      "Run": "Run",
+      "ResetActions": "Reset Actions",
+      "ResetActionsNotify": "{name}'s actions have been reset!"
     },
     "Refresh": "Refresh HUD",
     "Battle": {
