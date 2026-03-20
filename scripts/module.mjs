@@ -31,11 +31,10 @@ Hooks.once("init", () => {
     config: true,
     type: String,
     choices: {
-      "bottom-right": "Bottom Right",
       "bottom-left": "Bottom Left",
       "bottom-center": "Bottom Center"
     },
-    default: "bottom-right",
+    default: "bottom-left",
     onChange: () => {
       if (game.pokeCombatHUD?.rendered) game.pokeCombatHUD.render();
     }

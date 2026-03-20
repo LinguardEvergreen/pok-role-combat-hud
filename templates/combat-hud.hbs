@@ -62,6 +62,12 @@
       {{/if}}
     </div>
 
+    {{!-- Reset Actions Button --}}
+    <button class="hud-btn reset-actions-btn" data-action="reset-actions" title="{{localize 'POKEHUD.Menu.ResetActions'}}">
+      <i class="fas fa-redo-alt"></i>
+      <span class="btn-label">{{localize "POKEHUD.Menu.ResetActions"}}</span>
+    </button>
+
     {{!-- Moves Container (styled like portrait panel) --}}
     <div class="poke-hud-moves-panel {{#unless isMyTurn}}not-my-turn{{/unless}}">
       {{#if moves.length}}
@@ -95,12 +101,6 @@
       <p class="no-moves">{{localize "POKEHUD.Battle.NoMoves"}}</p>
       {{/if}}
     </div>
-
-    {{!-- Reset Actions Button --}}
-    <button class="hud-btn reset-actions-btn" data-action="reset-actions" title="{{localize 'POKEHUD.Menu.ResetActions'}}">
-      <i class="fas fa-redo-alt"></i>
-      <span class="btn-label">{{localize "POKEHUD.Menu.ResetActions"}}</span>
-    </button>
 
   </div>
   {{/if}}
