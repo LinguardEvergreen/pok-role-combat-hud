@@ -297,20 +297,42 @@ export class PokemonPanel {
       }
     }
 
-    // Clear all temporary effects (stat bonuses/maluses)
-    if (typeof pokemon.getTemporaryEffects === "function") {
+    // Clear all temporary effects (stat bonuses/maluses) from the system flag
+    if (typeof pokemon.getTemporaryEffects === "function" && typeof pokemon.removeTemporaryEffect === "function") {
       try {
-        const tempEffects = pokemon.getTemporaryEffects();
-        if (Array.isArray(tempEffects)) {
-          for (const effect of tempEffects) {
-            if (effect?.id && typeof pokemon.removeTemporaryEffect === "function") {
-              await pokemon.removeTemporaryEffect(effect.id);
-            }
+        let tempEffects = pokemon.getTemporaryEffects();
+        // Loop until no more temporary effects remain (removing one can shift the array)
+        while (Array.isArray(tempEffects) && tempEffects.length > 0) {
+          const effect = tempEffects[0];
+          if (effect?.id) {
+            await pokemon.removeTemporaryEffect(effect.id);
           }
+          tempEffects = pokemon.getTemporaryEffects();
         }
       } catch (err) {
         console.warn("pok-role-combat-hud | Could not clear temporary effects:", err);
       }
+    }
+
+    // Also remove any managed Active Effects on the actor (e.g. stat boosts from moves)
+    try {
+      const managedEffects = (pokemon.effects?.contents ?? []).filter(e => {
+        // Remove non-disabled effects that have pok-role-system automation flags
+        if (e.disabled) return false;
+        const automationFlag = e.getFlag?.("pok-role-system", "automation");
+        return automationFlag != null;
+      });
+      if (managedEffects.length > 0) {
+        const effectIds = managedEffects.map(e => e.id).filter(Boolean);
+        if (effectIds.length > 0) {
+          await pokemon.deleteEmbeddedDocuments("ActiveEffect", effectIds);
+          if (typeof pokemon.synchronizeConditionFlags === "function") {
+            await pokemon.synchronizeConditionFlags();
+          }
+        }
+      }
+    } catch (err) {
+      console.warn("pok-role-combat-hud | Could not clear active effects:", err);
     }
 
     // Clear multi-turn state only for "charge" mode.
