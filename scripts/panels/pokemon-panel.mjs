@@ -297,33 +297,56 @@ export class PokemonPanel {
       }
     }
 
-    // Clear all temporary effects (stat bonuses/maluses) from the system flag
+    // Persistent conditions that must NOT be removed on switch-out
+    const PERSISTENT_CONDITIONS = new Set([
+      "sleep", "burn", "burn2", "burn3", "frozen", "paralyzed",
+      "poisoned", "badly-poisoned", "badlypoisoned", "fainted", "dead"
+    ]);
+
+    // Clear non-persistent temporary effects (stat bonuses/maluses) from the system flag
     if (typeof pokemon.getTemporaryEffects === "function" && typeof pokemon.removeTemporaryEffect === "function") {
       try {
-        let tempEffects = pokemon.getTemporaryEffects();
-        // Loop until no more temporary effects remain (removing one can shift the array)
-        while (Array.isArray(tempEffects) && tempEffects.length > 0) {
-          const effect = tempEffects[0];
-          if (effect?.id) {
-            await pokemon.removeTemporaryEffect(effect.id);
+        const tempEffects = pokemon.getTemporaryEffects();
+        if (Array.isArray(tempEffects)) {
+          for (const effect of [...tempEffects]) {
+            if (!effect?.id) continue;
+            // Check if this effect is a persistent condition - if so, skip it
+            const changes = Array.isArray(effect.changes) ? effect.changes : [];
+            const isPersistent = changes.some(c => {
+              const condKey = (c?.conditionKey ?? "").trim().toLowerCase();
+              return PERSISTENT_CONDITIONS.has(condKey);
+            });
+            if (!isPersistent) {
+              await pokemon.removeTemporaryEffect(effect.id);
+            }
           }
-          tempEffects = pokemon.getTemporaryEffects();
         }
       } catch (err) {
         console.warn("pok-role-combat-hud | Could not clear temporary effects:", err);
       }
     }
 
-    // Also remove any managed Active Effects on the actor (e.g. stat boosts from moves)
+    // Remove non-persistent managed Active Effects (e.g. stat boosts from moves)
     try {
-      const managedEffects = (pokemon.effects?.contents ?? []).filter(e => {
-        // Remove non-disabled effects that have pok-role-system automation flags
+      const persistentStatuses = new Set([
+        "pokrole-condition-sleep", "pokrole-condition-burn",
+        "pokrole-condition-frozen", "pokrole-condition-paralyzed",
+        "pokrole-condition-poisoned", "pokrole-condition-badly-poisoned",
+        "pokrole-condition-fainted", "pokrole-condition-dead"
+      ]);
+
+      const volatileEffects = (pokemon.effects?.contents ?? []).filter(e => {
         if (e.disabled) return false;
         const automationFlag = e.getFlag?.("pok-role-system", "automation");
-        return automationFlag != null;
+        if (automationFlag == null) return false;
+        // Check if this effect has any persistent condition status
+        const statuses = [...(e.statuses ?? [])].map(s => `${s ?? ""}`.trim().toLowerCase());
+        const hasPersistentStatus = statuses.some(s => persistentStatuses.has(s));
+        return !hasPersistentStatus;
       });
-      if (managedEffects.length > 0) {
-        const effectIds = managedEffects.map(e => e.id).filter(Boolean);
+
+      if (volatileEffects.length > 0) {
+        const effectIds = volatileEffects.map(e => e.id).filter(Boolean);
         if (effectIds.length > 0) {
           await pokemon.deleteEmbeddedDocuments("ActiveEffect", effectIds);
           if (typeof pokemon.synchronizeConditionFlags === "function") {
