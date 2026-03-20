@@ -86,7 +86,9 @@
       "NotEnoughWill": "{move} richiede {cost} Volontà, ma ne rimangono solo {current}.",
       "PokemonFainted": "{name} è esausto e non può combattere!",
       "NoTrainer": "Nessun Allenatore trovato!",
-      "NoItemsLeft": "Nessun {name} rimasto!"
+      "NoItemsLeft": "Nessun {name} rimasto!",
+      "PokemonRampage": "{name} è in furia e non può essere sostituito!",
+      "AllPokemonRampage": "Tutti i tuoi Pokémon in campo sono in furia!"
     },
     "Error": {
       "MoveNotFound": "Mossa non trovata!",

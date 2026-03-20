@@ -75,11 +75,21 @@ export class PokemonPanel {
    * @returns {Promise<string|null>} The actor ID of the Pokémon to replace, or null if cancelled
    */
   async #askWhichPokemonToReplace(ownedCombatants, newPokemon) {
-    const options = ownedCombatants.map(c => {
-      const actor = c.actor;
-      const hp = actor.system.resources?.hp ?? { value: 0, max: 0 };
-      return `<option value="${actor.id}">${actor.name} (HP: ${hp.value}/${hp.max})</option>`;
-    }).join("");
+    const options = ownedCombatants
+      .filter(c => {
+        const state = c.actor?.getFlag("pok-role-system", "combat.multiTurnState");
+        return state?.mode !== "rampage";
+      })
+      .map(c => {
+        const actor = c.actor;
+        const hp = actor.system.resources?.hp ?? { value: 0, max: 0 };
+        return `<option value="${actor.id}">${actor.name} (HP: ${hp.value}/${hp.max})</option>`;
+      }).join("");
+
+    if (!options) {
+      ui.notifications.warn(game.i18n.localize("POKEHUD.Warn.AllPokemonRampage"));
+      return null;
+    }
 
     const content = `
       <p>${game.i18n.format("POKEHUD.Pokemon.ReplacePrompt", { name: newPokemon.name })}</p>
@@ -153,6 +163,12 @@ export class PokemonPanel {
         if (!chosenId) return; // User cancelled
         pokemonToReplace = game.actors.get(chosenId);
       } else if (ownedCombatants.length === 1) {
+        // Check if the single Pokémon is in rampage
+        const state = ownedCombatants[0].actor?.getFlag("pok-role-system", "combat.multiTurnState");
+        if (state?.mode === "rampage") {
+          ui.notifications.warn(game.i18n.format("POKEHUD.Warn.PokemonRampage", { name: ownedCombatants[0].actor.name }));
+          return;
+        }
         pokemonToReplace = ownedCombatants[0].actor;
       }
     }
