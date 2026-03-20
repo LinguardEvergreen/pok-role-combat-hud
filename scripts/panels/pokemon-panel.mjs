@@ -189,6 +189,11 @@ export class PokemonPanel {
     if (!confirm) return;
 
     try {
+      // 0. Clear volatile conditions, temporary effects, and multi-turn state on the outgoing Pokémon
+      if (pokemonToReplace) {
+        await this.#clearVolatileState(pokemonToReplace);
+      }
+
       // 1. Find the Pokémon to replace's token and combatant
       let spawnPosition = { x: 0, y: 0 };
 
@@ -267,5 +272,56 @@ export class PokemonPanel {
       console.error("pok-role-combat-hud | Error switching Pokémon:", err);
       ui.notifications.error(game.i18n.localize("POKEHUD.Error.SwitchFailed"));
     }
+  }
+
+  /**
+   * Clear volatile conditions, temporary effects, and multi-turn state
+   * when a Pokémon is switched out. Volatile conditions (confused, flinch,
+   * infatuated, disabled) are removed, along with all temporary stat
+   * bonuses/maluses and any active multi-turn state (e.g. rampage).
+   * @param {Actor} pokemon - The Pokémon being switched out
+   */
+  async #clearVolatileState(pokemon) {
+    if (!pokemon || pokemon.type !== "pokemon") return;
+
+    // Volatile conditions that reset on switch-out
+    const volatileConditions = ["confused", "flinch", "infatuated", "disabled"];
+
+    for (const condition of volatileConditions) {
+      if (typeof pokemon.toggleQuickCondition === "function") {
+        try {
+          await pokemon.toggleQuickCondition(condition, { active: false });
+        } catch (err) {
+          console.warn(`pok-role-combat-hud | Could not clear condition '${condition}':`, err);
+        }
+      }
+    }
+
+    // Clear all temporary effects (stat bonuses/maluses)
+    if (typeof pokemon.getTemporaryEffects === "function") {
+      try {
+        const tempEffects = pokemon.getTemporaryEffects();
+        if (Array.isArray(tempEffects)) {
+          for (const effect of tempEffects) {
+            if (effect?.id && typeof pokemon.removeTemporaryEffect === "function") {
+              await pokemon.removeTemporaryEffect(effect.id);
+            }
+          }
+        }
+      } catch (err) {
+        console.warn("pok-role-combat-hud | Could not clear temporary effects:", err);
+      }
+    }
+
+    // Clear multi-turn state (rampage, charge, recharge)
+    if (typeof pokemon.clearMultiTurnState === "function") {
+      try {
+        await pokemon.clearMultiTurnState();
+      } catch (err) {
+        console.warn("pok-role-combat-hud | Could not clear multi-turn state:", err);
+      }
+    }
+
+    console.log(`pok-role-combat-hud | Cleared volatile state for ${pokemon.name}`);
   }
 }
