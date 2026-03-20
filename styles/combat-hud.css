@@ -513,7 +513,7 @@
   background: linear-gradient(135deg, var(--run-bg-hover), var(--run-bg));
 }
 
-/* Reset Actions Button (between portrait and moves panel) */
+/* Reset Actions Button (below moves panel) */
 .reset-actions-btn {
   background: linear-gradient(135deg, #546E7A, #37474F);
   border: 2px solid #263238;
@@ -530,7 +530,7 @@
   gap: 6px;
   transition: all 0.15s ease;
   min-width: 120px;
-  align-self: center;
+  align-self: flex-end;
 }
 .reset-actions-btn:hover {
   background: linear-gradient(135deg, #455A64, #546E7A);
