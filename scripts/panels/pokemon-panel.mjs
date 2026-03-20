@@ -313,10 +313,16 @@ export class PokemonPanel {
       }
     }
 
-    // Clear multi-turn state (rampage, charge, recharge)
-    if (typeof pokemon.clearMultiTurnState === "function") {
+    // Clear multi-turn state only for "charge" mode.
+    // - Rampage: already blocked from switching (cannot reach here)
+    // - Charge: loses the charge on switch-out
+    // - Recharge: keep it, the Pokémon still needs to spend an action to recover
+    if (typeof pokemon._getMultiTurnState === "function" && typeof pokemon.clearMultiTurnState === "function") {
       try {
-        await pokemon.clearMultiTurnState();
+        const multiTurnState = pokemon._getMultiTurnState();
+        if (multiTurnState?.mode === "charge") {
+          await pokemon.clearMultiTurnState();
+        }
       } catch (err) {
         console.warn("pok-role-combat-hud | Could not clear multi-turn state:", err);
       }
