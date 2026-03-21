@@ -1,7 +1,6 @@
 /**
  * PokéRole Combat HUD - Token Animations
  * Recall (red shrink toward trainer) and Send Out (white fade-in) effects.
- * Uses token mesh tint and container scale — no PIXI.Graphics overlays.
  */
 
 /**
@@ -30,11 +29,14 @@ export async function animateRecall(tokenDoc, trainer, options = {}) {
     const startTime = performance.now();
 
     function tick() {
+      // Token may have been destroyed mid-animation
+      if (tokenObject.destroyed) { resolve(); return; }
+
       const elapsed = performance.now() - startTime;
       const progress = Math.min(elapsed / duration, 1);
       const ease = 1 - Math.pow(1 - progress, 3);
 
-      // Shrink using container scale (relative, starts at 1.0)
+      // Shrink
       const scaleFactor = 1 - ease * 0.85;
       tokenObject.scale.set(scaleFactor, scaleFactor);
 
@@ -44,7 +46,7 @@ export async function animateRecall(tokenDoc, trainer, options = {}) {
         startY + offsetY * ease
       );
 
-      // Red tint on the mesh
+      // Red tint
       if (tokenObject.mesh) {
         const g = Math.round(0xFF * (1 - ease));
         const b = Math.round(0xFF * (1 - ease));
@@ -69,7 +71,8 @@ export async function animateRecall(tokenDoc, trainer, options = {}) {
 }
 
 /**
- * Animate a Pokémon being sent out: white tint that fades, token scales up from small.
+ * Animate a Pokémon being sent out: starts invisible, white fade-in.
+ * Call this AFTER the token has been placed on the scene.
  * @param {TokenDocument} tokenDoc - The token document of the new Pokémon
  * @param {object} [options]
  * @param {number} [options.duration=600] - Animation duration in ms
@@ -77,49 +80,48 @@ export async function animateRecall(tokenDoc, trainer, options = {}) {
  */
 export async function animateSendOut(tokenDoc, options = {}) {
   const duration = options.duration ?? 600;
-  const tokenObject = tokenDoc?.object;
+
+  // Wait for the token object to be available on canvas
+  let tokenObject = tokenDoc?.object;
+  if (!tokenObject) {
+    // Token might not be rendered yet, wait a few frames
+    for (let i = 0; i < 10; i++) {
+      await new Promise(r => setTimeout(r, 50));
+      tokenObject = tokenDoc?.object;
+      if (tokenObject) break;
+    }
+  }
   if (!tokenObject) return;
 
-  // Wait a frame for the token to be fully rendered
-  await new Promise(r => requestAnimationFrame(r));
-
-  // Start small and transparent using container scale
-  tokenObject.scale.set(0.1, 0.1);
+  // Hide immediately so there's no flash of the fully visible token
   tokenObject.alpha = 0;
-  if (tokenObject.mesh) tokenObject.mesh.tint = 0xFFFFFF;
+  tokenObject.scale.set(0.15, 0.15);
+
+  // Wait one more frame to ensure render
+  await new Promise(r => requestAnimationFrame(r));
 
   return new Promise((resolve) => {
     const startTime = performance.now();
 
     function tick() {
+      if (tokenObject.destroyed) { resolve(); return; }
+
       const elapsed = performance.now() - startTime;
       const progress = Math.min(elapsed / duration, 1);
       const ease = 1 - Math.pow(1 - progress, 3);
 
-      // Scale up with slight overshoot then settle
-      let scaleFactor;
-      if (progress < 0.6) {
-        scaleFactor = (ease / 0.6) * 1.08;
-      } else {
-        const settle = (progress - 0.6) / 0.4;
-        scaleFactor = 1.08 - 0.08 * settle;
-      }
-      tokenObject.scale.set(Math.max(scaleFactor, 0.05), Math.max(scaleFactor, 0.05));
+      // Scale up: 0.15 → 1.0
+      const scaleFactor = 0.15 + ease * 0.85;
+      tokenObject.scale.set(scaleFactor, scaleFactor);
 
       // Fade in
-      tokenObject.alpha = Math.min(progress * 2.5, 1);
+      tokenObject.alpha = ease;
 
-      // White tint fades to normal
+      // White tint that fades: bright white at start, normal at end
       if (tokenObject.mesh) {
-        if (progress < 0.3) {
-          tokenObject.mesh.tint = 0xFFFFFF;
-        } else {
-          const tintProgress = (progress - 0.3) / 0.7;
-          const g = Math.round(0xFF);
-          const r = Math.round(0xFF);
-          const b = Math.round(0xFF);
-          // Tint stays white (0xFFFFFF = no tint) — already correct
-          tokenObject.mesh.tint = 0xFFFFFF;
+        // Keep white tint for first 40%, then let it fade
+        if (progress > 0.4) {
+          tokenObject.mesh.tint = 0xFFFFFF; // white = no tint change, natural color returns as alpha rises
         }
       }
 
