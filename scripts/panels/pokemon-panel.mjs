@@ -223,7 +223,8 @@ export class PokemonPanel {
 
       if (existingNewToken) {
         // 2a. New Pokémon already has a token on the map (not in combat) — swap positions
-        await existingNewToken.update({ x: oldPosition.x, y: oldPosition.y });
+        // Hide it first so it doesn't flash at the new position
+        await existingNewToken.update({ x: oldPosition.x, y: oldPosition.y, alpha: 0 });
         if (currentToken && newPosition) {
           await currentToken.update({ x: newPosition.x, y: newPosition.y });
         } else if (currentToken) {
@@ -253,7 +254,10 @@ export class PokemonPanel {
             actorLink: true
           });
 
-          const createdTokens = await scene.createEmbeddedDocuments("Token", [tokenData.toObject()]);
+          // Create token with alpha 0 so it doesn't flash before the animation
+          const tokenObj = tokenData.toObject();
+          tokenObj.alpha = 0;
+          const createdTokens = await scene.createEmbeddedDocuments("Token", [tokenObj]);
           sendOutTokenDoc = createdTokens[0];
 
           // Add new Pokémon to combat tracker

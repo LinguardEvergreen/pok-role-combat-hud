@@ -168,12 +168,13 @@ export async function animateSendOut(tokenDoc, options = {}) {
       if (progress < 1) {
         requestAnimationFrame(tick);
       } else {
-        // Show the real token, remove sprite
-        tokenObject.visible = true;
-        tokenObject.alpha = 1;
+        // Remove sprite
         canvas.stage.removeChild(sprite);
         sprite.destroy();
-        resolve();
+        // Restore real token: update the document alpha back to 1
+        tokenObject.visible = true;
+        tokenObject.alpha = 1;
+        tokenDoc.update({ alpha: 1 }).then(() => resolve());
       }
     }
 
