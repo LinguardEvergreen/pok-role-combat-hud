@@ -513,26 +513,34 @@
   background: linear-gradient(135deg, var(--run-bg-hover), var(--run-bg));
 }
 
-/* Reset Actions Button (inline, next to type badges) */
+/* Reset Actions Button (below type badges) */
 .reset-actions-inline-btn {
   background: none;
   border: 1px solid var(--panel-border);
   color: var(--text-dim);
-  font-size: 10px;
+  font-size: 9px;
   cursor: pointer;
-  padding: 2px 5px;
+  padding: 3px 8px;
   border-radius: 4px;
   transition: color 0.15s, background 0.15s, border-color 0.15s;
   line-height: 1;
-  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+  width: fit-content;
 }
 .reset-actions-inline-btn:hover {
   color: var(--text-light);
   background: rgba(255,255,255,0.1);
   border-color: var(--text-dim);
 }
-.reset-actions-inline-btn:active {
+.reset-actions-inline-btn:active i {
   transform: rotate(180deg);
+}
+.reset-actions-inline-btn i {
+  font-size: 9px;
+  transition: transform 0.3s ease;
 }
 
 /* Button Icon */

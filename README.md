@@ -55,10 +55,10 @@ The HUD displays your active Pokémon's info at the top:
 | Setting | Description | Default |
 |---------|-------------|---------|
 | **Enable Combat HUD** | Show/hide the HUD during combat | Enabled |
-| **HUD Position** | Screen position: bottom-right, bottom-left, or bottom-center | bottom-right |
+| **HUD Position** | Screen position: bottom-left or bottom-center | bottom-left |
 | **HUD Scale** | Resize the HUD (0.5x to 1.5x) | 1.0 |
 
-**Keybinding:** Press `Shift + P` to toggle the HUD on/off during combat.
+**Keybinding:** Press `Shift + P` to toggle the HUD on/off.
 
 ---
 

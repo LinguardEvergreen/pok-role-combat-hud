@@ -27,10 +27,11 @@
               {{pokemon.secondaryType}}
             </span>
             {{/if}}
-            <button class="reset-actions-inline-btn" data-action="reset-actions" title="{{localize 'POKEHUD.Menu.ResetActions'}}">
-              <i class="fas fa-redo-alt"></i>
-            </button>
           </div>
+          <button class="reset-actions-inline-btn" data-action="reset-actions" title="{{localize 'POKEHUD.Menu.ResetActions'}}">
+            <i class="fas fa-redo-alt"></i>
+            <span>{{localize "POKEHUD.Menu.ResetActions"}}</span>
+          </button>
         </div>
         <button class="portrait-refresh-btn" data-action="refresh-hud" title="{{localize 'POKEHUD.Refresh'}}">
           <i class="fas fa-sync-alt"></i>
