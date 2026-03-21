@@ -131,11 +131,22 @@ export async function animateSendOut(tokenDoc, options = {}) {
   tokenObject.alpha = 0;
   tokenObject.visible = false;
 
-  // Start sprite small and white
+  // Create a white overlay sprite (same size, solid white, on top)
+  const whiteSprite = new PIXI.Sprite(PIXI.Texture.WHITE);
+  whiteSprite.anchor.set(0.5, 0.5);
+  whiteSprite.x = centerX;
+  whiteSprite.y = centerY;
+  whiteSprite.width = targetW;
+  whiteSprite.height = targetH;
+  whiteSprite.alpha = 1;
+  canvas.stage.addChild(whiteSprite);
+
+  // Start sprite small
   sprite.width = targetW * 0.1;
   sprite.height = targetH * 0.1;
   sprite.alpha = 0;
-  sprite.tint = 0xFFFFFF;
+  whiteSprite.width = targetW * 0.1;
+  whiteSprite.height = targetH * 0.1;
 
   return new Promise((resolve) => {
     const startTime = performance.now();
@@ -149,29 +160,31 @@ export async function animateSendOut(tokenDoc, options = {}) {
       const scale = 0.1 + ease * 0.9;
       sprite.width = targetW * scale;
       sprite.height = targetH * scale;
-
-      // Keep centered
       sprite.x = centerX;
       sprite.y = centerY;
-
-      // Fade in
       sprite.alpha = Math.min(ease * 1.5, 1);
 
-      // White tint fades: stays white first 30%, then fades to normal
-      if (progress > 0.3) {
-        const tintProgress = (progress - 0.3) / 0.7;
-        const c = Math.round(0xFF * (1 - tintProgress * 0.15));
-        // Just reduce tint intensity slightly then back to white (no tint = 0xFFFFFF)
-        sprite.tint = 0xFFFFFF;
+      // White overlay: same size, fades out over time
+      whiteSprite.width = targetW * scale;
+      whiteSprite.height = targetH * scale;
+      whiteSprite.x = centerX;
+      whiteSprite.y = centerY;
+      // White stays full for first 20%, then fades out
+      if (progress < 0.2) {
+        whiteSprite.alpha = 1;
+      } else {
+        whiteSprite.alpha = Math.max(1 - (progress - 0.2) / 0.6, 0);
       }
 
       if (progress < 1) {
         requestAnimationFrame(tick);
       } else {
-        // Remove sprite
+        // Remove sprites
         canvas.stage.removeChild(sprite);
+        canvas.stage.removeChild(whiteSprite);
         sprite.destroy();
-        // Restore real token: update the document alpha back to 1
+        whiteSprite.destroy();
+        // Restore real token
         tokenObject.visible = true;
         tokenObject.alpha = 1;
         tokenDoc.update({ alpha: 1 }).then(() => resolve());
