@@ -4,6 +4,7 @@
  */
 
 import { TYPE_COLORS, getHpColorClass, getHpPercent, getTrainerParty, CONDITION_ICONS, getTrainerForActor } from "../helpers.mjs";
+import { animateRecall, animateSendOut } from "../animations.mjs";
 
 export class PokemonPanel {
   constructor(hud) {
@@ -205,6 +206,11 @@ export class PokemonPanel {
       const oldPosition = currentToken ? { x: currentToken.x, y: currentToken.y } : { x: 0, y: 0 };
       const newPosition = existingNewToken ? { x: existingNewToken.x, y: existingNewToken.y } : null;
 
+      // Animate recall: red shrink toward trainer
+      if (currentToken) {
+        await animateRecall(currentToken, trainer);
+      }
+
       // Remove outgoing Pokémon from combat tracker
       if (combat && pokemonToReplace) {
         const currentCombatant = combat.combatants.find(c => c.actor?.id === pokemonToReplace.id);
@@ -212,6 +218,8 @@ export class PokemonPanel {
           await currentCombatant.delete();
         }
       }
+
+      let sendOutTokenDoc = null;
 
       if (existingNewToken) {
         // 2a. New Pokémon already has a token on the map (not in combat) — swap positions
@@ -221,6 +229,8 @@ export class PokemonPanel {
         } else if (currentToken) {
           await currentToken.delete();
         }
+
+        sendOutTokenDoc = existingNewToken;
 
         // Add new Pokémon to combat tracker
         if (combat) {
@@ -244,17 +254,22 @@ export class PokemonPanel {
           });
 
           const createdTokens = await scene.createEmbeddedDocuments("Token", [tokenData.toObject()]);
-          const newTokenDoc = createdTokens[0];
+          sendOutTokenDoc = createdTokens[0];
 
           // Add new Pokémon to combat tracker
-          if (combat && newTokenDoc) {
+          if (combat && sendOutTokenDoc) {
             await combat.createEmbeddedDocuments("Combatant", [{
-              tokenId: newTokenDoc.id,
+              tokenId: sendOutTokenDoc.id,
               actorId: newPokemon.id,
               sceneId: scene.id
             }]);
           }
         }
+      }
+
+      // Animate send out: white fade-in
+      if (sendOutTokenDoc) {
+        await animateSendOut(sendOutTokenDoc);
       }
 
       // 3. Reset action counter for the new Pokémon
