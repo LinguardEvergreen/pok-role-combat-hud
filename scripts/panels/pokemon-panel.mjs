@@ -206,11 +206,6 @@ export class PokemonPanel {
       const oldPosition = currentToken ? { x: currentToken.x, y: currentToken.y } : { x: 0, y: 0 };
       const newPosition = existingNewToken ? { x: existingNewToken.x, y: existingNewToken.y } : null;
 
-      // Animate recall: red shrink toward trainer
-      if (currentToken) {
-        await animateRecall(currentToken, trainer);
-      }
-
       // Remove outgoing Pokémon from combat tracker
       if (combat && pokemonToReplace) {
         const currentCombatant = combat.combatants.find(c => c.actor?.id === pokemonToReplace.id);
@@ -222,13 +217,16 @@ export class PokemonPanel {
       let sendOutTokenDoc = null;
 
       if (existingNewToken) {
-        // 2a. New Pokémon already has a token on the map (not in combat) — swap positions
-        // Hide it first so it doesn't flash at the new position
-        await existingNewToken.update({ x: oldPosition.x, y: oldPosition.y, alpha: 0 });
+        // 2a. New Pokémon already has a token on the map — swap positions using Foundry's native animation
         if (currentToken && newPosition) {
+          // Swap: move both tokens to each other's positions (Foundry animates this natively)
+          await existingNewToken.update({ x: oldPosition.x, y: oldPosition.y });
           await currentToken.update({ x: newPosition.x, y: newPosition.y });
         } else if (currentToken) {
+          await existingNewToken.update({ x: oldPosition.x, y: oldPosition.y });
           await currentToken.delete();
+        } else {
+          // No current token, just leave existing where it is
         }
 
         sendOutTokenDoc = existingNewToken;
@@ -242,8 +240,9 @@ export class PokemonPanel {
           }]);
         }
       } else {
-        // 2b. New Pokémon has no token — delete old token, create new one
+        // 2b. New Pokémon has no token — use recall/send-out animations
         if (currentToken) {
+          await animateRecall(currentToken, trainer);
           await currentToken.delete();
         }
 
@@ -268,12 +267,12 @@ export class PokemonPanel {
               sceneId: scene.id
             }]);
           }
-        }
-      }
 
-      // Animate send out: white fade-in
-      if (sendOutTokenDoc) {
-        await animateSendOut(sendOutTokenDoc);
+          // Animate send out: white fade-in
+          if (sendOutTokenDoc) {
+            await animateSendOut(sendOutTokenDoc);
+          }
+        }
       }
 
       // 3. Reset action counter for the new Pokémon
