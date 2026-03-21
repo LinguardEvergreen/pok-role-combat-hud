@@ -194,64 +194,82 @@ export class PokemonPanel {
         await this.#clearVolatileState(pokemonToReplace);
       }
 
-      // 1. Find the Pokémon to replace's token and combatant
-      let spawnPosition = { x: 0, y: 0 };
+      // 1. Find tokens for the outgoing and incoming Pokémon
+      const currentToken = pokemonToReplace && scene
+        ? scene.tokens.find(t => t.actor?.id === pokemonToReplace.id)
+        : null;
+      const existingNewToken = scene
+        ? scene.tokens.find(t => t.actor?.id === newPokemon.id)
+        : null;
 
-      if (pokemonToReplace && scene) {
-        const currentToken = scene.tokens.find(t => t.actor?.id === pokemonToReplace.id);
-        if (currentToken) {
-          // Save position for the new token
-          spawnPosition = { x: currentToken.x, y: currentToken.y };
+      const oldPosition = currentToken ? { x: currentToken.x, y: currentToken.y } : { x: 0, y: 0 };
+      const newPosition = existingNewToken ? { x: existingNewToken.x, y: existingNewToken.y } : null;
 
-          // Remove current Pokémon from combat
-          if (combat) {
-            const currentCombatant = combat.combatants.find(c => c.actor?.id === pokemonToReplace.id);
-            if (currentCombatant) {
-              await currentCombatant.delete();
-            }
-          }
-
-          // Remove current Pokémon's token from the scene
-          await currentToken.delete();
+      // Remove outgoing Pokémon from combat tracker
+      if (combat && pokemonToReplace) {
+        const currentCombatant = combat.combatants.find(c => c.actor?.id === pokemonToReplace.id);
+        if (currentCombatant) {
+          await currentCombatant.delete();
         }
       }
 
-      // 2. Create the new Pokémon's token on the scene at the same position
-      if (scene) {
-        // Get prototype token data from the actor
-        const tokenData = await newPokemon.getTokenDocument({
-          x: spawnPosition.x,
-          y: spawnPosition.y,
-          actorLink: true
-        });
+      if (existingNewToken) {
+        // 2a. New Pokémon already has a token on the map (not in combat) — swap positions
+        await existingNewToken.update({ x: oldPosition.x, y: oldPosition.y });
+        if (currentToken && newPosition) {
+          await currentToken.update({ x: newPosition.x, y: newPosition.y });
+        } else if (currentToken) {
+          await currentToken.delete();
+        }
 
-        const createdTokens = await scene.createEmbeddedDocuments("Token", [tokenData.toObject()]);
-        const newTokenDoc = createdTokens[0];
-
-        // 3. Add the new Pokémon to the combat tracker
-        if (combat && newTokenDoc) {
-          const combatantData = [{
-            tokenId: newTokenDoc.id,
+        // Add new Pokémon to combat tracker
+        if (combat) {
+          await combat.createEmbeddedDocuments("Combatant", [{
+            tokenId: existingNewToken.id,
             actorId: newPokemon.id,
             sceneId: scene.id
-          }];
+          }]);
+        }
+      } else {
+        // 2b. New Pokémon has no token — delete old token, create new one
+        if (currentToken) {
+          await currentToken.delete();
+        }
 
-          await combat.createEmbeddedDocuments("Combatant", combatantData);
+        if (scene) {
+          const tokenData = await newPokemon.getTokenDocument({
+            x: oldPosition.x,
+            y: oldPosition.y,
+            actorLink: true
+          });
 
-          // 4. Reset action counter for the new Pokémon
-          if (typeof newPokemon.resetActionCounter === "function") {
-            await newPokemon.resetActionCounter();
+          const createdTokens = await scene.createEmbeddedDocuments("Token", [tokenData.toObject()]);
+          const newTokenDoc = createdTokens[0];
+
+          // Add new Pokémon to combat tracker
+          if (combat && newTokenDoc) {
+            await combat.createEmbeddedDocuments("Combatant", [{
+              tokenId: newTokenDoc.id,
+              actorId: newPokemon.id,
+              sceneId: scene.id
+            }]);
           }
+        }
+      }
 
-          // 5. Roll initiative for the new Pokémon
-          if (typeof newPokemon.rollInitiative === "function") {
-            await newPokemon.rollInitiative();
-          } else {
-            // Fallback: roll using the system formula
-            const newCombatant = combat.combatants.find(c => c.actor?.id === newPokemon.id);
-            if (newCombatant) {
-              await combat.rollInitiative([newCombatant.id]);
-            }
+      // 3. Reset action counter for the new Pokémon
+      if (typeof newPokemon.resetActionCounter === "function") {
+        await newPokemon.resetActionCounter();
+      }
+
+      // 4. Roll initiative for the new Pokémon
+      if (combat) {
+        if (typeof newPokemon.rollInitiative === "function") {
+          await newPokemon.rollInitiative();
+        } else {
+          const newCombatant = combat.combatants.find(c => c.actor?.id === newPokemon.id);
+          if (newCombatant) {
+            await combat.rollInitiative([newCombatant.id]);
           }
         }
       }
