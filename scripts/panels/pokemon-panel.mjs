@@ -238,7 +238,12 @@ export class PokemonPanel {
 
           await combat.createEmbeddedDocuments("Combatant", combatantData);
 
-          // 4. Roll initiative for the new Pokémon
+          // 4. Reset action counter for the new Pokémon
+          if (typeof newPokemon.resetActionCounter === "function") {
+            await newPokemon.resetActionCounter();
+          }
+
+          // 5. Roll initiative for the new Pokémon
           if (typeof newPokemon.rollInitiative === "function") {
             await newPokemon.rollInitiative();
           } else {
