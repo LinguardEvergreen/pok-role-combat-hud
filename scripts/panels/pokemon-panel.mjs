@@ -270,7 +270,7 @@ export class PokemonPanel {
 
           // Animate send out: white fade-in
           if (sendOutTokenDoc) {
-            await animateSendOut(sendOutTokenDoc);
+            await animateSendOut(sendOutTokenDoc, trainer);
           }
         }
       }

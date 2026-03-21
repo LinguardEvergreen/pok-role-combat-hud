@@ -93,16 +93,17 @@ export async function animateRecall(tokenDoc, trainer, options = {}) {
 }
 
 /**
- * Animate a Pokémon being sent out: white fade-in, scale up.
- * Creates a temporary sprite, hides the real token during animation,
- * then shows the real token at the end.
+ * Animate a Pokémon being sent out: inverse of recall but in white.
+ * Starts small and white at the trainer's position, grows to full size
+ * while moving to the target position, white tint fades out.
  * @param {TokenDocument} tokenDoc - The token document of the new Pokémon
+ * @param {Actor} trainer - The trainer actor (to find starting position)
  * @param {object} [options]
- * @param {number} [options.duration=600] - Animation duration in ms
+ * @param {number} [options.duration=800] - Animation duration in ms
  * @returns {Promise<void>}
  */
-export async function animateSendOut(tokenDoc, options = {}) {
-  const duration = options.duration ?? 600;
+export async function animateSendOut(tokenDoc, trainer, options = {}) {
+  const duration = options.duration ?? 800;
 
   // Wait for the token object to be available on canvas
   let tokenObject = tokenDoc?.object;
@@ -119,10 +120,16 @@ export async function animateSendOut(tokenDoc, options = {}) {
   await new Promise(r => requestAnimationFrame(r));
   await new Promise(r => requestAnimationFrame(r));
 
+  // Find trainer token position (start point)
+  const trainerToken = canvas.tokens?.placeables.find(t => t.actor?.id === trainer?.id);
+  const startX = trainerToken ? trainerToken.center.x : tokenObject.center.x;
+  const startY = trainerToken ? trainerToken.center.y : tokenObject.center.y;
+
+  // Target position (where the Pokémon token will end up)
+  const targetX = tokenObject.center.x;
+  const targetY = tokenObject.center.y;
   const targetW = tokenObject.w;
   const targetH = tokenObject.h;
-  const centerX = tokenObject.center.x;
-  const centerY = tokenObject.center.y;
 
   // Create temporary sprite and hide the real token
   const sprite = createTokenSprite(tokenObject);
@@ -131,22 +138,23 @@ export async function animateSendOut(tokenDoc, options = {}) {
   tokenObject.alpha = 0;
   tokenObject.visible = false;
 
-  // Create a white overlay sprite (same size, solid white, on top)
+  // Create white overlay sprite
   const whiteSprite = new PIXI.Sprite(PIXI.Texture.WHITE);
   whiteSprite.anchor.set(0.5, 0.5);
-  whiteSprite.x = centerX;
-  whiteSprite.y = centerY;
-  whiteSprite.width = targetW;
-  whiteSprite.height = targetH;
-  whiteSprite.alpha = 1;
   canvas.stage.addChild(whiteSprite);
 
-  // Start sprite small
-  sprite.width = targetW * 0.1;
-  sprite.height = targetH * 0.1;
-  sprite.alpha = 0;
-  whiteSprite.width = targetW * 0.1;
-  whiteSprite.height = targetH * 0.1;
+  // Start small at trainer position
+  sprite.width = targetW * 0.15;
+  sprite.height = targetH * 0.15;
+  sprite.x = startX;
+  sprite.y = startY;
+  sprite.alpha = 0.1;
+
+  whiteSprite.width = targetW * 0.15;
+  whiteSprite.height = targetH * 0.15;
+  whiteSprite.x = startX;
+  whiteSprite.y = startY;
+  whiteSprite.alpha = 1;
 
   return new Promise((resolve) => {
     const startTime = performance.now();
@@ -156,30 +164,30 @@ export async function animateSendOut(tokenDoc, options = {}) {
       const progress = Math.min(elapsed / duration, 1);
       const ease = 1 - Math.pow(1 - progress, 3);
 
-      // Scale up from 10% to 100%
-      const scale = 0.1 + ease * 0.9;
+      // Scale up from 15% to 100%
+      const scale = 0.15 + ease * 0.85;
       sprite.width = targetW * scale;
       sprite.height = targetH * scale;
-      sprite.x = centerX;
-      sprite.y = centerY;
-      sprite.alpha = Math.min(ease * 1.5, 1);
-
-      // White overlay: same size, fades out over time
       whiteSprite.width = targetW * scale;
       whiteSprite.height = targetH * scale;
-      whiteSprite.x = centerX;
-      whiteSprite.y = centerY;
-      // White stays full for first 20%, then fades out
-      if (progress < 0.2) {
-        whiteSprite.alpha = 1;
-      } else {
-        whiteSprite.alpha = Math.max(1 - (progress - 0.2) / 0.6, 0);
-      }
+
+      // Move from trainer to target position
+      const curX = startX + (targetX - startX) * ease;
+      const curY = startY + (targetY - startY) * ease;
+      sprite.x = curX;
+      sprite.y = curY;
+      whiteSprite.x = curX;
+      whiteSprite.y = curY;
+
+      // Token fades in
+      sprite.alpha = 0.1 + ease * 0.9;
+
+      // White overlay fades out (inverse of recall's red fade-in)
+      whiteSprite.alpha = 1 - ease;
 
       if (progress < 1) {
         requestAnimationFrame(tick);
       } else {
-        // Remove sprites
         canvas.stage.removeChild(sprite);
         canvas.stage.removeChild(whiteSprite);
         sprite.destroy();
