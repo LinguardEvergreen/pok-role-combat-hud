@@ -9,7 +9,8 @@
       "LeaveMelee": "Leave Melee",
       "Run": "Run",
       "ResetActions": "Reset Actions",
-      "ResetActionsNotify": "{name}'s actions have been reset!"
+      "ResetActionsNotify": "{name}'s actions have been reset!",
+      "CombinedRoll": "Combined Roll"
     },
     "Refresh": "Refresh HUD",
     "Battle": {

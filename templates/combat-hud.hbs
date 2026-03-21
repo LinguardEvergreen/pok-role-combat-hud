@@ -28,10 +28,16 @@
             </span>
             {{/if}}
           </div>
-          <button class="reset-actions-inline-btn" data-action="reset-actions" title="{{localize 'POKEHUD.Menu.ResetActions'}}">
-            <i class="fas fa-redo-alt"></i>
-            <span>{{localize "POKEHUD.Menu.ResetActions"}}</span>
-          </button>
+          <div class="portrait-action-buttons">
+            <button class="portrait-action-btn" data-action="reset-actions" title="{{localize 'POKEHUD.Menu.ResetActions'}}">
+              <i class="fas fa-redo-alt"></i>
+              <span>{{localize "POKEHUD.Menu.ResetActions"}}</span>
+            </button>
+            <button class="portrait-action-btn" data-action="combined-roll" title="{{localize 'POKEHUD.Menu.CombinedRoll'}}">
+              <i class="fas fa-dice"></i>
+              <span>{{localize "POKEHUD.Menu.CombinedRoll"}}</span>
+            </button>
+          </div>
         </div>
         <button class="portrait-refresh-btn" data-action="refresh-hud" title="{{localize 'POKEHUD.Refresh'}}">
           <i class="fas fa-sync-alt"></i>
@@ -122,6 +128,12 @@
             <span class="rank-badge">{{trainerData.rankLabel}}</span>
           </div>
           {{/if}}
+          <div class="portrait-action-buttons">
+            <button class="portrait-action-btn" data-action="combined-roll" title="{{localize 'POKEHUD.Menu.CombinedRoll'}}">
+              <i class="fas fa-dice"></i>
+              <span>{{localize "POKEHUD.Menu.CombinedRoll"}}</span>
+            </button>
+          </div>
         </div>
         <button class="portrait-refresh-btn" data-action="refresh-hud" title="{{localize 'POKEHUD.Refresh'}}">
           <i class="fas fa-sync-alt"></i>

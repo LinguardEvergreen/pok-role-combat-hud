@@ -513,8 +513,14 @@
   background: linear-gradient(135deg, var(--run-bg-hover), var(--run-bg));
 }
 
-/* Reset Actions Button (below type badges) */
-.reset-actions-inline-btn {
+/* Portrait Action Buttons (below type badges / rank) */
+.portrait-action-buttons {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.portrait-action-btn {
   background: none;
   border: 1px solid var(--panel-border);
   color: var(--text-dim);
@@ -527,20 +533,14 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  margin-top: 4px;
-  width: fit-content;
 }
-.reset-actions-inline-btn:hover {
+.portrait-action-btn:hover {
   color: var(--text-light);
   background: rgba(255,255,255,0.1);
   border-color: var(--text-dim);
 }
-.reset-actions-inline-btn:active i {
-  transform: rotate(180deg);
-}
-.reset-actions-inline-btn i {
+.portrait-action-btn i {
   font-size: 9px;
-  transition: transform 0.3s ease;
 }
 
 /* Button Icon */

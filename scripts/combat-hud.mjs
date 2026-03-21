@@ -320,6 +320,12 @@ export class CombatHUD extends HandlebarsApplicationMixin(ApplicationV2) {
       e.preventDefault();
       this.#onResetActions();
     });
+
+    // Combined Roll button
+    html.querySelector('[data-action="combined-roll"]')?.addEventListener("click", (e) => {
+      e.preventDefault();
+      this.#onCombinedRoll();
+    });
   }
 
   /* ---------------------------------------- */
@@ -375,6 +381,26 @@ export class CombatHUD extends HandlebarsApplicationMixin(ApplicationV2) {
       }
     } catch (err) {
       console.error("pok-role-combat-hud | Error in Toggle Fray:", err);
+      ui.notifications.error(game.i18n.localize("POKEHUD.Error.ActionFailed"));
+    }
+  }
+
+  /**
+   * "Tiro Combinato" - Combined Roll action.
+   * Delegates to the system's rollCombinedDialog() method.
+   */
+  async #onCombinedRoll() {
+    const actor = this.activeActor;
+    if (!actor) return;
+
+    try {
+      if (typeof actor.rollCombinedDialog === "function") {
+        await actor.rollCombinedDialog();
+      } else {
+        ui.notifications.warn(game.i18n.localize("POKEHUD.Error.SystemMethodNotFound"));
+      }
+    } catch (err) {
+      console.error("pok-role-combat-hud | Error in Combined Roll:", err);
       ui.notifications.error(game.i18n.localize("POKEHUD.Error.ActionFailed"));
     }
   }

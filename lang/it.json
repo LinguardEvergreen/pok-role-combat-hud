@@ -9,7 +9,8 @@
       "LeaveMelee": "Esci dalla Mischia",
       "Run": "Fuggi",
       "ResetActions": "Reset Azioni",
-      "ResetActionsNotify": "Le azioni di {name} sono state resettate!"
+      "ResetActionsNotify": "Le azioni di {name} sono state resettate!",
+      "CombinedRoll": "Tiro Combinato"
     },
     "Refresh": "Aggiorna HUD",
     "Battle": {
