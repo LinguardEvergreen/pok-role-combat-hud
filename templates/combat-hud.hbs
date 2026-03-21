@@ -27,6 +27,9 @@
               {{pokemon.secondaryType}}
             </span>
             {{/if}}
+            <button class="reset-actions-inline-btn" data-action="reset-actions" title="{{localize 'POKEHUD.Menu.ResetActions'}}">
+              <i class="fas fa-redo-alt"></i>
+            </button>
           </div>
         </div>
         <button class="portrait-refresh-btn" data-action="refresh-hud" title="{{localize 'POKEHUD.Refresh'}}">
@@ -61,12 +64,6 @@
       </div>
       {{/if}}
     </div>
-
-    {{!-- Reset Actions Button --}}
-    <button class="hud-btn reset-actions-btn" data-action="reset-actions" title="{{localize 'POKEHUD.Menu.ResetActions'}}">
-      <i class="fas fa-redo-alt"></i>
-      <span class="btn-label">{{localize "POKEHUD.Menu.ResetActions"}}</span>
-    </button>
 
     {{!-- Moves Container (styled like portrait panel) --}}
     <div class="poke-hud-moves-panel {{#unless isMyTurn}}not-my-turn{{/unless}}">
