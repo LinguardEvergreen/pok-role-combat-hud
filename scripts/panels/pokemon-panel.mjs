@@ -292,7 +292,22 @@ export class PokemonPanel {
         }
       }
 
-      // 5. Post switch message to chat
+      // 5. Apply entry hazards (Spikes, Stealth Rock, Toxic Spikes, etc.)
+      if (combat && typeof newPokemon._applyEntryHazardsForActor === "function") {
+        try {
+          const hazardResults = await newPokemon._applyEntryHazardsForActor(newPokemon, { combat });
+          if (Array.isArray(hazardResults) && hazardResults.length > 0) {
+            // The system method posts its own chat message via _applyEntryHazardChatMessage
+            if (typeof newPokemon._applyEntryHazardChatMessage === "function") {
+              await newPokemon._applyEntryHazardChatMessage(newPokemon, hazardResults);
+            }
+          }
+        } catch (err) {
+          console.warn("pok-role-combat-hud | Could not apply entry hazards:", err);
+        }
+      }
+
+      // 6. Post switch message to chat
       await ChatMessage.create({
         content: `<div class="poke-hud-chat switch-message">
           <img src="${newPokemon.img}" width="40" height="40" alt="${newPokemon.name}"/>
