@@ -195,6 +195,26 @@ export class PokemonPanel {
         await this.#clearVolatileState(pokemonToReplace);
       }
 
+      // 0b. Regenerator: heal 1 HP before switching out
+      if (pokemonToReplace?.type === "pokemon") {
+        const switchAbility = `${pokemonToReplace.system?.ability ?? ""}`.trim().toLowerCase();
+        if (switchAbility === "regenerator") {
+          const hp = Math.max(Number(pokemonToReplace.system?.resources?.hp?.value) || 0, 0);
+          const hpMax = Math.max(Number(pokemonToReplace.system?.resources?.hp?.max) || 0, 0);
+          if (hp > 0 && hp < hpMax) {
+            if (typeof pokemonToReplace._safeApplyHeal === "function") {
+              await pokemonToReplace._safeApplyHeal(pokemonToReplace, 1, { healingCategory: "unlimited" });
+            } else {
+              await pokemonToReplace.update({ "system.resources.hp.value": Math.min(hp + 1, hpMax) });
+            }
+            await ChatMessage.create({
+              speaker: ChatMessage.getSpeaker({ actor: pokemonToReplace }),
+              content: `<strong>${pokemonToReplace.name}'s</strong> Regenerator healed 1 HP on switch-out!`
+            });
+          }
+        }
+      }
+
       // 1. Find tokens for the outgoing and incoming Pokémon
       const currentToken = pokemonToReplace && scene
         ? scene.tokens.find(t => t.actor?.id === pokemonToReplace.id)
