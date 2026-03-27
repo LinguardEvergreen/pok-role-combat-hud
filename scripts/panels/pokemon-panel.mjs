@@ -293,17 +293,26 @@ export class PokemonPanel {
       }
 
       // 5. Apply entry hazards (Spikes, Stealth Rock, Toxic Spikes, etc.)
-      if (combat && typeof newPokemon._applyEntryHazardsForActor === "function") {
-        try {
-          const hazardResults = await newPokemon._applyEntryHazardsForActor(newPokemon, { combat });
-          if (Array.isArray(hazardResults) && hazardResults.length > 0) {
-            // The system method posts its own chat message via _applyEntryHazardChatMessage
-            if (typeof newPokemon._applyEntryHazardChatMessage === "function") {
-              await newPokemon._applyEntryHazardChatMessage(newPokemon, hazardResults);
-            }
+      // The system calls this._applyEntryHazardsForActor(incomingActor) where 'this' is
+      // an actor with correct side context (the outgoing Pokémon or trainer).
+      // Using the outgoing Pokémon as caller ensures the side disposition is resolved correctly.
+      if (combat) {
+        const hazardCaller = pokemonToReplace ?? trainer;
+        if (hazardCaller && typeof hazardCaller._applyEntryHazardsForActor === "function") {
+          try {
+            await hazardCaller._applyEntryHazardsForActor(newPokemon, { combat });
+          } catch (err) {
+            console.warn("pok-role-combat-hud | Could not apply entry hazards:", err);
           }
-        } catch (err) {
-          console.warn("pok-role-combat-hud | Could not apply entry hazards:", err);
+        }
+
+        // Also apply held item entry effects (e.g. items that trigger on switch-in)
+        if (typeof newPokemon._applyHeldItemEntryEffects === "function") {
+          try {
+            await newPokemon._applyHeldItemEntryEffects({ combat });
+          } catch (err) {
+            console.warn("pok-role-combat-hud | Could not apply held item entry effects:", err);
+          }
         }
       }
 
