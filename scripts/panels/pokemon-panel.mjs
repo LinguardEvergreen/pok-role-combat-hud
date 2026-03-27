@@ -204,6 +204,7 @@ export class PokemonPanel {
         : null;
 
       const oldPosition = currentToken ? { x: currentToken.x, y: currentToken.y } : { x: 0, y: 0 };
+      const oldDisposition = currentToken?.disposition ?? CONST.TOKEN_DISPOSITIONS.FRIENDLY;
       const newPosition = existingNewToken ? { x: existingNewToken.x, y: existingNewToken.y } : null;
 
       // Remove outgoing Pokémon from combat tracker
@@ -218,6 +219,9 @@ export class PokemonPanel {
 
       if (existingNewToken) {
         // 2a. New Pokémon already has a token on the map — swap positions using Foundry's native animation
+        // Set the same disposition as the outgoing token so hazards match the correct side
+        await existingNewToken.update({ disposition: oldDisposition });
+
         if (currentToken && newPosition) {
           // Swap: move both tokens to each other's positions (Foundry animates this natively)
           await existingNewToken.update({ x: oldPosition.x, y: oldPosition.y });
@@ -254,8 +258,10 @@ export class PokemonPanel {
           });
 
           // Create token with alpha 0 so it doesn't flash before the animation
+          // Copy the outgoing token's disposition so entry hazards match the correct side
           const tokenObj = tokenData.toObject();
           tokenObj.alpha = 0;
+          tokenObj.disposition = oldDisposition;
           const createdTokens = await scene.createEmbeddedDocuments("Token", [tokenObj]);
           sendOutTokenDoc = createdTokens[0];
 
