@@ -106,7 +106,7 @@ export class BagPanel {
   }
 
   /**
-   * Use an item from the bag.
+   * Use an item from the bag via the system's useGearItem method.
    * @param {string} itemId - The Item ID
    */
   async useItem(itemId) {
@@ -116,115 +116,17 @@ export class BagPanel {
       return;
     }
 
-    const item = trainer.items.get(itemId);
-    if (!item) {
-      ui.notifications.error(game.i18n.localize("POKEHUD.Error.ItemNotFound"));
+    if (typeof trainer.useGearItem !== "function") {
+      ui.notifications.error(game.i18n.localize("POKEHUD.Error.SystemMethodNotFound"));
       return;
     }
 
-    // Check quantity
-    const quantity = item.system.quantity ?? 1;
-    if (quantity <= 0) {
-      ui.notifications.warn(game.i18n.format("POKEHUD.Warn.NoItemsLeft", { name: item.name }));
-      return;
-    }
-
-    // Use the targeted token's actor if available, otherwise fall back to active Pokémon
-    const targetedToken = game.user.targets?.first();
-    const targetPokemon = targetedToken?.actor ?? this.hud.activePokemon;
-    const confirm = await foundry.applications.api.DialogV2.confirm({
-      window: { title: game.i18n.localize("POKEHUD.Bag.UseTitle") },
-      content: `<p>${game.i18n.format("POKEHUD.Bag.UseConfirm", {
-        item: item.name,
-        target: targetPokemon?.name ?? "?"
-      })}</p>`,
-      yes: { label: game.i18n.localize("POKEHUD.Bag.UseYes") },
-      no: { label: game.i18n.localize("POKEHUD.Bag.UseNo") }
-    });
-
-    if (!confirm) return;
-
-    // Apply item effects
     try {
-      await this.#applyItemEffects(item, targetPokemon, trainer);
-
-      // Decrement quantity if consumable
-      if (item.system.consumable) {
-        await item.update({ "system.quantity": quantity - 1 });
-      }
-
-      // Post usage to chat
-      await ChatMessage.create({
-        content: `<div class="poke-hud-chat item-message">
-          <img src="${item.img}" width="32" height="32" alt="${item.name}"/>
-          <span>${game.i18n.format("POKEHUD.Bag.UseChat", {
-            trainer: trainer.name,
-            item: item.name,
-            target: targetPokemon?.name ?? ""
-          })}</span>
-        </div>`,
-        speaker: ChatMessage.getSpeaker({ actor: trainer })
-      });
-
-      // Refresh the HUD
+      await trainer.useGearItem(itemId);
       this.hud.refresh();
-
     } catch (err) {
       console.error("pok-role-combat-hud | Error using item:", err);
       ui.notifications.error(game.i18n.localize("POKEHUD.Error.ItemUseFailed"));
-    }
-  }
-
-  /**
-   * Apply an item's effects to the target Pokémon.
-   * @param {Item} item
-   * @param {Actor} target
-   * @param {Actor} trainer
-   */
-  async #applyItemEffects(item, target, trainer) {
-    if (!target) return;
-
-    const sys = item.system;
-    const updates = {};
-
-    // HP Healing
-    if (sys.heal) {
-      const hp = target.system.resources.hp;
-      if (sys.heal.fullHp) {
-        updates["system.resources.hp.value"] = hp.max;
-      } else if (sys.heal.hp > 0) {
-        updates["system.resources.hp.value"] = Math.min(hp.max, hp.value + sys.heal.hp);
-      }
-    }
-
-    // Status cures
-    if (sys.status) {
-      if (sys.status.all) {
-        updates["system.conditions.sleep"] = false;
-        updates["system.conditions.burn"] = false;
-        updates["system.conditions.frozen"] = false;
-        updates["system.conditions.paralyzed"] = false;
-        updates["system.conditions.poisoned"] = false;
-      } else {
-        for (const [cond, cured] of Object.entries(sys.status)) {
-          if (cured && cond !== "all") {
-            updates[`system.conditions.${cond}`] = false;
-          }
-        }
-      }
-    }
-
-    // Revive (clear fainted)
-    if (sys.category === "revive") {
-      updates["system.conditions.fainted"] = false;
-      if (sys.heal?.hp > 0) {
-        const hp = target.system.resources.hp;
-        updates["system.resources.hp.value"] = Math.min(hp.max, sys.heal.hp);
-      }
-    }
-
-    if (Object.keys(updates).length > 0) {
-      await target.update(updates);
     }
   }
 }
