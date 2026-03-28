@@ -91,6 +91,7 @@
       "NoTrainer": "No Trainer found!",
       "NoItemsLeft": "No {name} left!",
       "PokemonRampage": "{name} is rampaging and cannot be switched out!",
+      "PokemonTrapped": "{name} is trapped and cannot be switched out!",
       "AllPokemonRampage": "All your Pokémon in battle are rampaging!"
     },
     "Error": {
