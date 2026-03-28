@@ -129,8 +129,9 @@ export class BagPanel {
       return;
     }
 
-    // Confirm usage
-    const targetPokemon = this.hud.activePokemon;
+    // Use the targeted token's actor if available, otherwise fall back to active Pokémon
+    const targetedToken = game.user.targets?.first();
+    const targetPokemon = targetedToken?.actor ?? this.hud.activePokemon;
     const confirm = await foundry.applications.api.DialogV2.confirm({
       window: { title: game.i18n.localize("POKEHUD.Bag.UseTitle") },
       content: `<p>${game.i18n.format("POKEHUD.Bag.UseConfirm", {

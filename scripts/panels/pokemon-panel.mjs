@@ -164,13 +164,21 @@ export class PokemonPanel {
         if (!chosenId) return; // User cancelled
         pokemonToReplace = game.actors.get(chosenId);
       } else if (ownedCombatants.length === 1) {
-        // Check if the single Pokémon is in rampage
-        const state = ownedCombatants[0].actor?.getFlag("pok-role-system", "combat.multiTurnState");
-        if (state?.mode === "rampage") {
-          ui.notifications.warn(game.i18n.format("POKEHUD.Warn.PokemonRampage", { name: ownedCombatants[0].actor.name }));
+        pokemonToReplace = ownedCombatants[0].actor;
+      }
+
+      // Check if the outgoing Pokémon is trapped (Arena Trap / Shadow Tag / Magnet Pull / Mean Look etc.)
+      if (pokemonToReplace) {
+        if (this.#isSwitchLocked(pokemonToReplace)) {
+          ui.notifications.warn(game.i18n.format("POKEHUD.Warn.PokemonTrapped", { name: pokemonToReplace.name }));
           return;
         }
-        pokemonToReplace = ownedCombatants[0].actor;
+        // Check if the Pokémon is in rampage
+        const state = pokemonToReplace.getFlag?.("pok-role-system", "combat.multiTurnState");
+        if (state?.mode === "rampage") {
+          ui.notifications.warn(game.i18n.format("POKEHUD.Warn.PokemonRampage", { name: pokemonToReplace.name }));
+          return;
+        }
       }
     }
 
@@ -372,6 +380,21 @@ export class PokemonPanel {
    * bonuses/maluses and any active multi-turn state (e.g. rampage).
    * @param {Actor} pokemon - The Pokémon being switched out
    */
+  /**
+   * Check if a Pokémon is switch-locked by a trapping ability or move
+   * (Arena Trap, Shadow Tag, Magnet Pull, Mean Look, etc.).
+   * @param {Actor} pokemon
+   * @returns {boolean}
+   */
+  #isSwitchLocked(pokemon) {
+    if (!pokemon || pokemon.type !== "pokemon") return false;
+    const effects = pokemon.effects?.filter(e => {
+      const flags = e.flags?.["pok-role-system"]?.automation ?? {};
+      return flags.effectType === "switch-lock" && flags.blocksSwitch !== false;
+    });
+    return effects?.length > 0;
+  }
+
   async #clearVolatileState(pokemon) {
     if (!pokemon || pokemon.type !== "pokemon") return;
 

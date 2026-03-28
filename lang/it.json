@@ -91,6 +91,7 @@
       "NoTrainer": "Nessun Allenatore trovato!",
       "NoItemsLeft": "Nessun {name} rimasto!",
       "PokemonRampage": "{name} è in furia e non può essere sostituito!",
+      "PokemonTrapped": "{name} è intrappolato e non può essere sostituito!",
       "AllPokemonRampage": "Tutti i tuoi Pokémon in campo sono in furia!"
     },
     "Error": {
