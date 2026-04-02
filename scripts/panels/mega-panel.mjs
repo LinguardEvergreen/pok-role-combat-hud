@@ -29,36 +29,68 @@ export class MegaPanel {
    * @returns {object|null} { evolutionEntry, heldItem, megaFormName } or null
    */
   getMegaData(pokemon, trainer) {
-    if (!pokemon || pokemon.type !== "pokemon") return null;
-    if (!trainer || trainer.type !== "trainer") return null;
+    if (!pokemon || pokemon.type !== "pokemon") {
+      console.log("pok-role-combat-hud | Mega check: no pokemon or wrong type", pokemon?.type);
+      return null;
+    }
+    if (!trainer || trainer.type !== "trainer") {
+      console.log("pok-role-combat-hud | Mega check: no trainer found for", pokemon.name, "trainer:", trainer);
+      return null;
+    }
 
     // Already mega-evolved?
-    if (this.#isMegaEvolved(pokemon)) return null;
+    if (this.#isMegaEvolved(pokemon)) {
+      console.log("pok-role-combat-hud | Mega check: already mega-evolved");
+      return null;
+    }
 
     // Trainer already used mega evolution this combat?
-    if (this.#hasTrainerMegaEvolvedThisCombat(trainer)) return null;
+    if (this.#hasTrainerMegaEvolvedThisCombat(trainer)) {
+      console.log("pok-role-combat-hud | Mega check: trainer already mega-evolved this combat");
+      return null;
+    }
 
     // Find mega evolution entry
     const evolutions = Array.isArray(pokemon.system?.evolutions) ? pokemon.system.evolutions : [];
+    console.log("pok-role-combat-hud | Mega check: evolutions for", pokemon.name, "=", JSON.stringify(evolutions));
     const megaEvo = evolutions.find(e => e.kind === "mega" && e.to && e.to.trim() !== "");
-    if (!megaEvo) return null;
+    if (!megaEvo) {
+      console.log("pok-role-combat-hud | Mega check: no mega evolution entry found");
+      return null;
+    }
 
     // Check held item is a compatible Mega Stone
+    const battleItemId = `${pokemon.system?.battleItem ?? ""}`.trim();
+    console.log("pok-role-combat-hud | Mega check: battleItem ID =", battleItemId);
+
     const heldItem = typeof pokemon._getHeldItemDocument === "function"
       ? pokemon._getHeldItemDocument({ requireCompatible: true })
       : null;
 
-    if (!heldItem || !heldItem.system?.held?.isMegaStone) return null;
+    console.log("pok-role-combat-hud | Mega check: heldItem =", heldItem?.name, "isMegaStone =", heldItem?.system?.held?.isMegaStone);
 
-    // Check the mega stone matches the evolution's item requirement
-    const requiredItem = (megaEvo.item ?? "").trim().toLowerCase();
-    const heldName = (heldItem.name ?? "").trim().toLowerCase();
-    if (requiredItem && !heldName.includes(requiredItem) && !requiredItem.includes(heldName)) {
-      // Fallback: also check if the held item is compatible via the system's own check
-      // (the _getHeldItemDocument with requireCompatible already checks species match)
-      // So if we got here, the item is species-compatible. The name check is a soft guard.
+    if (!heldItem) {
+      // Try without compatibility requirement to see if the item exists but fails compatibility
+      const heldItemNoCompat = typeof pokemon._getHeldItemDocument === "function"
+        ? pokemon._getHeldItemDocument({ requireCompatible: false })
+        : null;
+      console.log("pok-role-combat-hud | Mega check: heldItem (no compat check) =", heldItemNoCompat?.name, "isMegaStone =", heldItemNoCompat?.system?.held?.isMegaStone);
+
+      if (!heldItemNoCompat) {
+        // Fallback: search for a mega stone in the Pokémon's embedded items
+        const embeddedMegaStone = (pokemon.items?.contents ?? []).find(i =>
+          i.type === "gear" && i.system?.held?.isMegaStone === true
+        );
+        console.log("pok-role-combat-hud | Mega check: embedded mega stone =", embeddedMegaStone?.name);
+      }
     }
 
+    if (!heldItem || !heldItem.system?.held?.isMegaStone) {
+      console.log("pok-role-combat-hud | Mega check: no valid mega stone held");
+      return null;
+    }
+
+    console.log("pok-role-combat-hud | Mega check: PASSED! Can mega evolve into", megaEvo.to);
     return {
       megaFormName: megaEvo.to.trim(),
       requiredItem: megaEvo.item ?? "",
