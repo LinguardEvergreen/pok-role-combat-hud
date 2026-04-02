@@ -127,7 +127,7 @@ export function getTrainerForActor(actor) {
   if (!actor) return null;
   if (actor.type === "trainer") return actor;
 
-  // For a Pokémon, find the Trainer with the same ownership
+  // Method 1: Find via document ownership → user's assigned character
   const owners = Object.entries(actor.ownership)
     .filter(([id, level]) => level === CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER && id !== "default")
     .map(([id]) => id);
@@ -136,6 +136,15 @@ export function getTrainerForActor(actor) {
     const user = game.users.get(userId);
     if (user?.character?.type === "trainer") return user.character;
   }
+
+  // Method 2: Find a Trainer that has this Pokémon in their party (system.party)
+  const pokemonId = actor.id;
+  for (const a of game.actors) {
+    if (a.type !== "trainer") continue;
+    const partyIds = a.system?.party ?? [];
+    if (Array.isArray(partyIds) && partyIds.includes(pokemonId)) return a;
+  }
+
   return null;
 }
 
