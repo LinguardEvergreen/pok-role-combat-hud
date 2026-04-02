@@ -9,6 +9,18 @@
 
     {{!-- Portrait --}}
     <div class="poke-hud-portrait">
+      {{#if pokemon.canMegaEvolve}}
+      <button class="mega-evolve-btn" data-action="mega-evolve" title="{{localize 'POKEHUD.Mega.Title'}}">
+        <i class="fas fa-dna"></i>
+        <span>{{localize "POKEHUD.Mega.Button"}}</span>
+      </button>
+      {{/if}}
+      {{#if pokemon.isMegaEvolved}}
+      <div class="mega-active-badge">
+        <i class="fas fa-dna"></i>
+        <span>MEGA</span>
+      </div>
+      {{/if}}
       <div class="portrait-header">
         <img class="pokemon-sprite" src="{{pokemon.img}}" alt="{{pokemon.name}}" width="64" height="64"/>
         <div class="pokemon-info">

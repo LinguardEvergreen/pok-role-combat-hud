@@ -84,6 +84,21 @@
       "Flinch": "Flinch",
       "Infatuated": "Infatuated"
     },
+    "Mega": {
+      "Title": "Mega Evolution",
+      "Button": "MEGA EVOLUTION",
+      "Confirm": "Mega Evolve {name} into {mega}?",
+      "Yes": "Mega Evolve!",
+      "No": "Cancel",
+      "Success": "{name} Mega Evolved!",
+      "Failed": "Mega Evolution failed.",
+      "CannotMega": "This Pokémon cannot Mega Evolve right now.",
+      "NotEnoughWill": "Trainer does not have enough Will to Mega Evolve!",
+      "FormNotFound": "Mega Form \"{name}\" not found in world or compendium.",
+      "ChatMessage": "Mega Evolved!",
+      "AlreadyMega": "This Pokémon is already Mega Evolved.",
+      "TrainerAlreadyUsed": "Trainer has already used Mega Evolution this battle."
+    },
     "Warn": {
       "NoPokemon": "No active Pokémon!",
       "NotEnoughWill": "{move} requires {cost} Will, but only {current} remaining.",

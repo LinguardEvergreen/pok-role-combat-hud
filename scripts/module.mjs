@@ -100,8 +100,12 @@ Hooks.on("createCombat", (combat) => {
   game.pokeCombatHUD.showHUD();
 });
 
-// Refresh HUD when combat ends (don't hide - HUD works outside combat too)
+// When combat ends: revert mega evolutions and refresh HUD
 Hooks.on("deleteCombat", (combat) => {
+  // Revert all mega evolutions from this combat
+  if (game.pokeCombatHUD?.megaPanel) {
+    game.pokeCombatHUD.megaPanel.revertAllMegaEvolutions(combat.id);
+  }
   if (!game.pokeCombatHUD?.rendered) return;
   game.pokeCombatHUD.refresh();
 });

@@ -84,6 +84,21 @@
       "Flinch": "Tentennamento",
       "Infatuated": "Infatuazione"
     },
+    "Mega": {
+      "Title": "Mega Evoluzione",
+      "Button": "MEGA EVOLUZIONE",
+      "Confirm": "Mega Evolvere {name} in {mega}?",
+      "Yes": "Mega Evolvi!",
+      "No": "Annulla",
+      "Success": "{name} si è Mega Evoluto!",
+      "Failed": "Mega Evoluzione fallita.",
+      "CannotMega": "Questo Pokémon non può Mega Evolversi adesso.",
+      "NotEnoughWill": "L'Allenatore non ha abbastanza Volontà per la Mega Evoluzione!",
+      "FormNotFound": "Forma Mega \"{name}\" non trovata nel mondo o nel compendio.",
+      "ChatMessage": "si è Mega Evoluto!",
+      "AlreadyMega": "Questo Pokémon è già Mega Evoluto.",
+      "TrainerAlreadyUsed": "L'Allenatore ha già usato la Mega Evoluzione in questa lotta."
+    },
     "Warn": {
       "NoPokemon": "Nessun Pokémon attivo!",
       "NotEnoughWill": "{move} richiede {cost} Volontà, ma ne rimangono solo {current}.",

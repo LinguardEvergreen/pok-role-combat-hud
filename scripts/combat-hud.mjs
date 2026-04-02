@@ -8,6 +8,7 @@ import { BattlePanel } from "./panels/battle-panel.mjs";
 import { PokemonPanel } from "./panels/pokemon-panel.mjs";
 import { BagPanel } from "./panels/bag-panel.mjs";
 import { RunPanel } from "./panels/run-panel.mjs";
+import { MegaPanel } from "./panels/mega-panel.mjs";
 
 const { HandlebarsApplicationMixin, ApplicationV2 } = foundry.applications.api;
 
@@ -21,6 +22,7 @@ export class CombatHUD extends HandlebarsApplicationMixin(ApplicationV2) {
   #pokemonPanel = new PokemonPanel(this);
   #bagPanel = new BagPanel(this);
   #runPanel = new RunPanel(this);
+  #megaPanel = new MegaPanel(this);
 
   /* ---------------------------------------- */
   /*  Application Configuration               */
@@ -52,6 +54,10 @@ export class CombatHUD extends HandlebarsApplicationMixin(ApplicationV2) {
 
   get activePanel() {
     return this.#activePanel;
+  }
+
+  get megaPanel() {
+    return this.#megaPanel;
   }
 
   /**
@@ -163,6 +169,11 @@ export class CombatHUD extends HandlebarsApplicationMixin(ApplicationV2) {
     const types = pokemon.system.types ?? {};
     const conditions = pokemon.system.conditions ?? {};
 
+    // Mega Evolution data
+    const trainer = this.trainer;
+    const megaData = this.#megaPanel.getMegaData(pokemon, trainer);
+    const isMegaEvolved = this.#megaPanel.isMegaEvolved(pokemon);
+
     return {
       name: pokemon.name,
       img: pokemon.img,
@@ -177,7 +188,9 @@ export class CombatHUD extends HandlebarsApplicationMixin(ApplicationV2) {
       primaryTypeColor: TYPE_COLORS[types.primary]?.bg ?? TYPE_COLORS.normal.bg,
       secondaryTypeColor: types.secondary && types.secondary !== "none" ? TYPE_COLORS[types.secondary]?.bg : null,
       conditions: this.#getActiveConditions(conditions),
-      isFainted: conditions.fainted ?? false
+      isFainted: conditions.fainted ?? false,
+      canMegaEvolve: !!megaData,
+      isMegaEvolved
     };
   }
 
@@ -326,6 +339,12 @@ export class CombatHUD extends HandlebarsApplicationMixin(ApplicationV2) {
       e.preventDefault();
       this.#onCombinedRoll();
     });
+
+    // Mega Evolution button
+    html.querySelector('[data-action="mega-evolve"]')?.addEventListener("click", (e) => {
+      e.preventDefault();
+      this.#onMegaEvolve();
+    });
   }
 
   /* ---------------------------------------- */
@@ -425,6 +444,16 @@ export class CombatHUD extends HandlebarsApplicationMixin(ApplicationV2) {
       console.error("pok-role-combat-hud | Error resetting actions:", err);
       ui.notifications.error(game.i18n.localize("POKEHUD.Error.ActionFailed"));
     }
+  }
+
+  /**
+   * Mega Evolution for the active Pokémon.
+   */
+  async #onMegaEvolve() {
+    const pokemon = this.activePokemon;
+    const trainer = this.trainer;
+    if (!pokemon || !trainer) return;
+    await this.#megaPanel.megaEvolve(pokemon, trainer);
   }
 
   /* ---------------------------------------- */
