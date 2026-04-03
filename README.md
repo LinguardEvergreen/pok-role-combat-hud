@@ -85,7 +85,7 @@ The HUD displays your active Pokémon's info at the top:
 ## Requirements
 
 - **FoundryVTT** v13 (verified on Build 351)
-- **PokéRole System** (`pok-role-system`) v0.12.1+
+- **PokéRole System** (`pok-role-system`) v1.0.0+
 
 This module is designed exclusively for the `pok-role-system`. It reads Pokémon actor data (types, resources, conditions, moves) and Trainer actor data (inventory, party) using that system's data model.
 
