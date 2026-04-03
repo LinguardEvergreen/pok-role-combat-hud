@@ -1,6 +1,6 @@
 # PokéRole Combat HUD
 
-A Pokémon-themed Combat HUD overlay for [FoundryVTT v13](https://foundryvtt.com/), designed for the [PokéRole 2.0 system](https://github.com/RiccardoMont1/Pok-Role-Module) (`pok-role-system`).
+A Pokémon-themed Combat HUD overlay for [FoundryVTT v13](https://foundryvtt.com/), designed for the [PokéRole 3.0 system](https://github.com/RiccardoMont1/Pok-Role-Module) (`pok-role-system`).
 
 Replaces the default combat interface with the classic Pokémon battle menu featuring four familiar buttons: **Battle**, **Pokémon**, **Bag**, and **Run**.
 
