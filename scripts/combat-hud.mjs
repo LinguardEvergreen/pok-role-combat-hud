@@ -66,13 +66,15 @@ export class CombatHUD extends HandlebarsApplicationMixin(ApplicationV2) {
    * @returns {Actor|null}
    */
   get activeActor() {
-    // Always use the selected token's actor
+    // Always use the selected token's actor, but only if the user owns it
     const controlled = canvas.tokens?.controlled;
     if (controlled?.length === 1) {
-      return controlled[0].actor ?? null;
+      const actor = controlled[0].actor;
+      if (actor?.isOwner) return actor;
+      return null;
     }
-    // Fallback: if in combat and no token selected, use the active combatant
-    if (game.combat?.combatant?.actor) {
+    // Fallback: if in combat and no token selected, use the active combatant (only if owned)
+    if (game.combat?.combatant?.actor?.isOwner) {
       return game.combat.combatant.actor;
     }
     return null;
